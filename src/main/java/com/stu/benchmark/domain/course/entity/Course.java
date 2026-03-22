@@ -39,6 +39,7 @@ public class Course {
 	Long maxCapacity;
 
 	@Column(nullable = false)
+	@org.hibernate.annotations.ColumnDefault("0")
 	Long enrolledCount;
 
 	@CreationTimestamp
