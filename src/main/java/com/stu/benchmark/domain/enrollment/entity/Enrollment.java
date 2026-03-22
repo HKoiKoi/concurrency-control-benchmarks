@@ -49,9 +49,11 @@ public class Enrollment {
 
 	@Builder
 	public Enrollment(Long studentId, Long courseId) {
+
 		if (studentId == null || courseId == null) {
 			throw new IllegalArgumentException("studentId와 courseId는 null일 수 없습니다.");
 		}
+		
 		this.studentId = studentId;
 		this.courseId = courseId;
 	}

@@ -2,6 +2,7 @@ package com.stu.benchmark.domain.course.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -38,8 +39,8 @@ public class Course {
 	@Column(nullable = false)
 	Long maxCapacity;
 
+	@ColumnDefault("0")
 	@Column(nullable = false)
-	@org.hibernate.annotations.ColumnDefault("0")
 	Long enrolledCount;
 
 	@CreationTimestamp
