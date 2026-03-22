@@ -2,7 +2,8 @@
 
 > 서울신학대학교(STU) 일반대학원 IT융합학과 석사논문 주제: RDBMS, Redis 및 Zookeeper 기반 동시성 제어 전략의 성능 및 안정성 비교 분석
 
-본 프로젝트는 **수강신청(Enrollment)** 시스템을 모사하여, 특정 시점에 요청이 폭증하는 **버스트 트래픽(Burst Traffic)** 상황에서 각 분산 락 메커니즘이 시스템의 정합성과 가용성을 얼마나 안정적으로 방어하는지 연구합니다.
+본 프로젝트는 **수강신청(Enrollment)** 시스템을 모사하여, 특정 시점에 요청이 폭증하는 **버스트 트래픽(Burst Traffic)** 상황에서 각 분산 락 메커니즘이 시스템의 정합성과 가용성을 얼마나
+안정적으로 방어하는지 연구합니다.
 
 ---
 
@@ -10,7 +11,8 @@
 
 ![데이터베이스(MySQL) 중심의 동시성 제어 아키텍처](/docs/images/readme/database-level-concurrency-control-architecture.png)
 
-> **그림 1:** 데이터베이스(MySQL) 중심의 동시성 제어 아키텍처. `NoLock`, `Optimistic Lock`, `Pessimistic Lock`, `MySQL Named Lock` 전략이 구현됩니다.
+> **그림 1:** 데이터베이스(MySQL) 중심의 동시성 제어 아키텍처. `NoLock`, `Optimistic Lock`, `Pessimistic Lock`, `MySQL Named Lock` 전략이
+> 구현됩니다.
 
 ![데이터베이스(MySQL) 중심의 동시성 제어 아키텍처](/docs/images/readme/redis-based-distributed-locking-architecture.png)
 
@@ -50,11 +52,10 @@
 
 - **COURSE:** 강의 정보를 담는 엔터티로, 동시성 제어의 핵심 타겟(공유 자원)이 됩니다.
 - **STUDENT:** 학생 정보를 담는 엔터티로, 부하 테스트를 위한 사용자 더미 데이터입니다.
-- **ENROLLMENT:** 수강신청 정보를 담는 엔터티로, `COURSE`와 `STUDENT`의 매핑 테이블입니다. (중복 신청 방지를 위한 Unique Constraint(`student_id`, `course_id`) 적용)
+- **ENROLLMENT:** 수강신청 정보를 담는 엔터티로, `COURSE`와 `STUDENT`의 매핑 테이블입니다. (중복 신청 방지를 위한 Unique Constraint(`student_id`,
+  `course_id`) 적용)
 
-<!-- TODO: Enrollment ERD 이미지 삽입 -->
-
-![Enrollment ERD]()
+![Enrollment ERD](/docs/images/readme/enrollment-erd.png)
 
 ---
 
