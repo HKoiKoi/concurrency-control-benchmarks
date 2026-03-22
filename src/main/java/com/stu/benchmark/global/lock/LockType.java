@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum LockType {
 
-	LETTUCE("lock:lettue:course:"),
+	LETTUCE("lock:lettuce:course:"),
 	;
 
 	private final String prefix;

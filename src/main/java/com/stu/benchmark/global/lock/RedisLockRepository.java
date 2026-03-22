@@ -21,6 +21,14 @@ public class RedisLockRepository {
 		end
 		""";
 
+	private static final DefaultRedisScript<Long> UNLOCK_SCRIPT;
+
+	static {
+		UNLOCK_SCRIPT = new DefaultRedisScript<>();
+		UNLOCK_SCRIPT.setScriptText(UNLOCK_LUA_SCRIPT);
+		UNLOCK_SCRIPT.setResultType(Long.class);
+	}
+
 	private final StringRedisTemplate redisTemplate;
 
 	/**
@@ -40,18 +48,14 @@ public class RedisLockRepository {
 
 		String lockKey = LockType.LETTUCE.generateKey(key);
 
-		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
-		redisScript.setScriptText(UNLOCK_LUA_SCRIPT);
-		redisScript.setResultType(Long.class);
-
 		// Lua 스크립트 실행: KEYS[1] = lockKey, ARGV[1] = value
 		Long result = redisTemplate.execute(
-			redisScript,
+			UNLOCK_SCRIPT,
 			Collections.singletonList(lockKey),
 			value
 		);
 
 		// 삭제 성공 시 1 반환, 내 락이 아니거나 없으면 0 반환
-		return result > 0L;
+		return result != null && result > 0L;
 	}
 }

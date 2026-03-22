@@ -11,8 +11,6 @@ import org.testcontainers.utility.DockerImageName;
 @TestConfiguration(proxyBeanMethods = false)
 public class TestConfig {
 
-	private static final String TEST_REDIS_PASSWORD = "testRedisPass123!";
-
 	@Bean
 	@ServiceConnection(name = "redis")
 	public GenericContainer<?> redisContainer() {
