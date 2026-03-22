@@ -1,3 +1,35 @@
 spring:
+  profiles:
+    active: dev
   application:
     name: benchmark
+  threads:
+    virtual:
+      enabled: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+    hikari:
+      maximum-pool-size: 64
+      minimum-idle: 20
+      connection-timeout: 5000
+      pool-name: ConcurrencyTestPool
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+server:
+  port: 8080
+  tomcat:
+    threads:
+      max: 200
+    accept-count: 500
+    max-connections: 800
+    mbeanregistry:
+      enabled: true
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
