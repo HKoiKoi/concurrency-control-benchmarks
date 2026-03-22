@@ -1,4 +1,4 @@
-name: distributed-lock-benchmarks
+name: concurrency-control-benchmarks
 
 services:
   # MySQL
@@ -21,7 +21,7 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --max-connections=1000
     networks:
-      - distributed-lock-network
+      - concurrency-control-network
     healthcheck:
       test:
         [
@@ -40,7 +40,7 @@ services:
     restart: no
 
 networks:
-  distributed-lock-network:
+  concurrency-control-network:
     driver: bridge
 
 volumes:
