@@ -3,7 +3,7 @@ package com.stu.benchmark.global.config;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -13,22 +13,16 @@ public class RedissonConfig {
 
 	private static final String REDISSON_HOST_PREFIX = "redis://";
 
-	@Value("${spring.data.redis.host}")
-	private String host;
-
-	@Value("${spring.data.redis.port}")
-	private int port;
-
-	@Value("${spring.data.redis.password}")
-	private String password;
-
 	@Bean
-	public RedissonClient redissonClient() {
+	public RedissonClient redissonClient(RedisConnectionDetails connectionDetails) {
 
 		Config config = new Config();
 
+		var standalone = connectionDetails.getStandalone();
+		String address = REDISSON_HOST_PREFIX + standalone.getHost() + ":" + standalone.getPort();
+
 		var singleServerConfig = config.useSingleServer()
-			.setAddress(REDISSON_HOST_PREFIX + host + ":" + port)
+			.setAddress(address)
 			// 일반 명령 커넥션 풀
 			.setConnectionMinimumIdleSize(32)
 			.setConnectionPoolSize(64)
@@ -41,8 +35,8 @@ public class RedissonConfig {
 			.setRetryAttempts(3)    // 실패 시 재시도 횟수
 			.setRetryInterval(1000);    // 재시도 간격
 
-		if (StringUtils.hasText(password)) {
-			singleServerConfig.setPassword(password);
+		if (StringUtils.hasText(connectionDetails.getPassword())) {
+			singleServerConfig.setPassword(connectionDetails.getPassword());
 		}
 
 		return Redisson.create(config);
