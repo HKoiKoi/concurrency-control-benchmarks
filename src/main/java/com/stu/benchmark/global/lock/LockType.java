@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum LockType {
 
 	LETTUCE("lock:lettuce:course:"),
+	REDISSON("lock:redisson:course:"),
 	;
 
 	private final String prefix;

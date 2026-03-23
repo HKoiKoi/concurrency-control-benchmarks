@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stu.benchmark.domain.enrollment.dto.EnrollmentCreateRequest;
+import com.stu.benchmark.domain.enrollment.facade.PubSubLockFacade;
 import com.stu.benchmark.domain.enrollment.facade.SpinLockFacade;
 import com.stu.benchmark.domain.enrollment.service.EnrollmentService;
 
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class EnrollmentController {
 
 	private final SpinLockFacade spinLockFacade;
+	private final PubSubLockFacade pubSubLockFacade;
 	private final EnrollmentService enrollmentService;
 
 	/**
@@ -52,5 +54,13 @@ public class EnrollmentController {
 	) {
 		spinLockFacade.enrollWithSpinLock(request);
 		return ResponseEntity.ok("[Case 2: Spin Lock] 수강신청이 성공적으로 완료되었습니다.");
+	}
+
+	@PostMapping("/pub-sub-lock")
+	public ResponseEntity<String> enrollWithPubSubLock(
+		@Valid @RequestBody EnrollmentCreateRequest request
+	) {
+		pubSubLockFacade.enrollWithPubSubLock(request);
+		return ResponseEntity.ok("[Case 3: Pub/Sub Lock] 수강신청이 성공적으로 완료되었습니다.");
 	}
 }
