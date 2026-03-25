@@ -18,6 +18,12 @@ spring:
     hibernate:
       ddl-auto: validate
 
+redisson:
+  lock:
+    # TODO: waitTime(3~10초)·leaseTime(2~5초) 또는 워치독(-1)으로 조정하며 성능 평가
+    wait-time: 5000 # 락 획득 대기 시간 (ms)
+    lease-time: 3000 # 락 유지 시간 (ms)
+
 logging:
   level:
     root: warn
