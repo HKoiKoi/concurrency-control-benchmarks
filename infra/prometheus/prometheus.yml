@@ -13,3 +13,8 @@ scrape_configs:
     metrics_path: "/actuator/prometheus"
     static_configs:
       - targets: ["was1:8080", "was2:8080"]
+
+  # Redis 매트릭 수집
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis-exporter:9121"]

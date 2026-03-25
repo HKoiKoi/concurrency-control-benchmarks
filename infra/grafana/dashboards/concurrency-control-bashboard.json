@@ -21,6 +21,19 @@
   "links": [],
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 11,
+      "panels": [],
+      "title": "Global Traffic & Latency",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -91,7 +104,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               }
@@ -106,7 +119,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               }
@@ -121,7 +134,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               },
@@ -143,7 +156,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               }
@@ -158,7 +171,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               },
@@ -180,7 +193,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               },
@@ -199,7 +212,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 1,
       "options": {
@@ -306,7 +319,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               }
@@ -321,7 +334,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               }
@@ -336,7 +349,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               }
@@ -351,7 +364,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               },
@@ -373,7 +386,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               },
@@ -395,7 +408,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               },
@@ -414,7 +427,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "id": 2,
       "options": {
@@ -513,7 +526,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               }
@@ -528,7 +541,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               }
@@ -543,7 +556,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               }
@@ -558,7 +571,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               },
@@ -580,7 +593,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               },
@@ -602,7 +615,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               },
@@ -621,7 +634,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 13
       },
       "id": 3,
       "options": {
@@ -649,6 +662,19 @@
       ],
       "title": "95th Percentile (p95 Latency)",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 10,
+      "panels": [],
+      "title": "Concurrency Analysis",
+      "type": "row"
     },
     {
       "datasource": {
@@ -721,7 +747,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               }
@@ -736,7 +762,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               }
@@ -751,7 +777,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               }
@@ -766,7 +792,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               },
@@ -788,7 +814,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               },
@@ -810,7 +836,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               },
@@ -829,7 +855,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 24
       },
       "id": 4,
       "options": {
@@ -929,7 +955,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               }
@@ -944,7 +970,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               }
@@ -959,7 +985,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               }
@@ -974,7 +1000,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-blue",
+                  "fixedColor": "#B877FF",
                   "mode": "fixed"
                 }
               },
@@ -996,7 +1022,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-green",
+                  "fixedColor": "#33B2CC",
                   "mode": "fixed"
                 }
               },
@@ -1018,7 +1044,7 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "dark-orange",
+                  "fixedColor": "#FF9830",
                   "mode": "fixed"
                 }
               },
@@ -1037,7 +1063,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 24
       },
       "id": 5,
       "options": {
@@ -1065,6 +1091,19 @@
       ],
       "title": "Average Service Time (S)",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 9,
+      "panels": [],
+      "title": "Resource Utilization",
+      "type": "row"
     },
     {
       "datasource": {
@@ -1164,7 +1203,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 35
       },
       "id": 6,
       "options": {
@@ -1291,7 +1330,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 35
       },
       "id": 7,
       "options": {
@@ -1319,6 +1358,118 @@
       ],
       "title": "WAS Heap Memory Usage",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "Redis 서버의 CPU 소모량. Spin Lock 재시도 간격(10ms)이 너무 짧을 경우 여기서 피크가 발생합니다.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Redis"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#4ab577",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.1",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "irate(redis_cpu_user_seconds_total[1m]) + irate(redis_cpu_sys_seconds_total[1m])",
+          "legendFormat": "Redis",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Redis CPU Usage",
+      "type": "timeseries"
     }
   ],
   "preload": false,
@@ -1335,6 +1486,6 @@
   "timezone": "browser",
   "title": "New dashboard",
   "uid": "stf9n6w",
-  "version": 16,
+  "version": 1,
   "weekStart": ""
 }
