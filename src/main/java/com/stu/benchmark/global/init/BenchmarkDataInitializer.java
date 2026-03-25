@@ -10,7 +10,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.stu.benchmark.domain.course.entity.Course;
 import com.stu.benchmark.domain.course.repository.CourseRepository;
@@ -32,9 +32,9 @@ public class BenchmarkDataInitializer implements CommandLineRunner {
 	private final StudentRepository studentRepository;
 
 	private final RedissonClient redissonClient;
+	private final TransactionTemplate transactionTemplate;
 
 	@Override
-	@Transactional
 	public void run(String... args) {
 
 		RLock lock = redissonClient.getLock(INIT_LOCK_KEY);
@@ -47,7 +47,12 @@ public class BenchmarkDataInitializer implements CommandLineRunner {
 				return;
 			}
 
-			initializeData();
+			// TransactionTemplate을 사용해 트랜잭션이 완전히 커밋된 후 락을 해제합니다.
+			// (@Transactional 자기 호출은 프록시를 우회하므로 TransactionTemplate을 사용합니다.)
+			transactionTemplate.execute(status -> {
+				initializeData();
+				return null;
+			});
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			log.error(">>> [DataInitializer] 데이터 초기화 락 획득 중 인터럽트 발생", e);
@@ -94,3 +99,4 @@ public class BenchmarkDataInitializer implements CommandLineRunner {
 		}
 	}
 }
+

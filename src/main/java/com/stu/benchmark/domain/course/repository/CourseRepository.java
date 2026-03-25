@@ -23,4 +23,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	@Modifying(clearAutomatically = true)
 	@Query("UPDATE Course c SET c.enrolledCount = 0")
 	void resetAllEnrolledCounts();
+
+	@Query("SELECT COALESCE(SUM(c.enrolledCount), 0) FROM Course c")
+	Long sumEnrolledCounts();
 }
