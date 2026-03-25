@@ -52,6 +52,8 @@ management:
       percentiles-histogram:
         http.server.requests: true
         spring.data.repository.invocations: true
+        benchmark.lock.wait.time: true
+        benchmark.lock.service.time: true
       minimum-expected-value:
         http.server.requests: 10ms
       maximum-expected-value:
