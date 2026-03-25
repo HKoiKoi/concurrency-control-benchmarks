@@ -1,6 +1,84 @@
 name: concurrency-control-benchmarks
 
+x-was-healthcheck: &was-healthcheck
+  test:
+    [
+      "CMD-SHELL",
+      "wget -q --spider http://localhost:8080/actuator/health || exit 1",
+    ]
+  interval: 10s
+  timeout: 5s
+  retries: 5
+  start_period: 30s
+
 services:
+  # Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      was1:
+        condition: service_healthy
+      was2:
+        condition: service_healthy
+    networks:
+      - concurrency-control-network
+    restart: no
+
+  # WAS#1
+  was1:
+    build: .
+    container_name: was1
+    environment:
+      - SPRING_PROFILES_ACTIVE=bench
+      - TZ=Asia/Seoul
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - concurrency-control-network
+    healthcheck: *was-healthcheck
+    restart: no
+
+  # WAS#2
+  was2:
+    build: .
+    container_name: was2
+    environment:
+      - SPRING_PROFILES_ACTIVE=bench
+      - TZ=Asia/Seoul
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - concurrency-control-network
+    healthcheck: *was-healthcheck
+    restart: no
+
   # MySQL
   mysql:
     image: mysql:8.0
