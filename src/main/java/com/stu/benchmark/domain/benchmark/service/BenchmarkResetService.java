@@ -38,7 +38,6 @@ public class BenchmarkResetService {
 		log.info("[Benchmark Reset] 수강 인원 0으로 변경 완료");
 		log.info("[Benchmark Reset] 수강 이력 제거 완료 ({}건)", currentEnrollmentCount);
 
-		// DB 커밋 이후에 Redis 잔여 락 강제 삭제 (트랜잭션 롤백 시 Redis 변경이 남는 불일치 방지)
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
 			@Override
 			public void afterCommit() {

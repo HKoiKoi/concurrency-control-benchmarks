@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Profile("bench")
 @RestController
+@Profile("bench")
 @RequiredArgsConstructor
 @RequestMapping("/v1/benchmark")
 public class BenchmarkController {

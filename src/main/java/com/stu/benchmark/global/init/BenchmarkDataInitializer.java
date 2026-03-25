@@ -47,8 +47,6 @@ public class BenchmarkDataInitializer implements CommandLineRunner {
 				return;
 			}
 
-			// TransactionTemplate을 사용해 트랜잭션이 완전히 커밋된 후 락을 해제합니다.
-			// (@Transactional 자기 호출은 프록시를 우회하므로 TransactionTemplate을 사용합니다.)
 			transactionTemplate.execute(status -> {
 				initializeData();
 				return null;
