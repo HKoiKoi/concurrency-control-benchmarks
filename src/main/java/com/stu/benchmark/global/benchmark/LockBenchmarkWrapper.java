@@ -33,6 +33,7 @@ public class LockBenchmarkWrapper {
 		Timer.builder("benchmark.lock.wait.time")
 			.description("Lock Wait Time (W)")
 			.tag("lock_type", lockType)
+			.publishPercentileHistogram()    // Prometheus가 quantile을 계산할 수 있게 버킷 생성
 			.register(meterRegistry)
 			.record(tServiceStart - tArrival, TimeUnit.NANOSECONDS);
 
@@ -46,6 +47,7 @@ public class LockBenchmarkWrapper {
 			Timer.builder("benchmark.lock.service.time")
 				.description("Lock Service Time (S)")
 				.tag("lock_type", lockType)
+				.publishPercentileHistogram()    // Prometheus가 quantile을 계산할 수 있게 버킷 생성
 				.register(meterRegistry)
 				.record(tComplete - tServiceStart, TimeUnit.NANOSECONDS);
 
