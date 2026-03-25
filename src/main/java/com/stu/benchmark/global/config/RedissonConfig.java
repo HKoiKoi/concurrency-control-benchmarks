@@ -35,6 +35,10 @@ public class RedissonConfig {
 			.setRetryAttempts(3)    // 실패 시 재시도 횟수
 			.setRetryInterval(1000);    // 재시도 간격
 
+		if (StringUtils.hasText(connectionDetails.getUsername())) {
+			singleServerConfig.setUsername(connectionDetails.getUsername());
+		}
+
 		if (StringUtils.hasText(connectionDetails.getPassword())) {
 			singleServerConfig.setPassword(connectionDetails.getPassword());
 		}

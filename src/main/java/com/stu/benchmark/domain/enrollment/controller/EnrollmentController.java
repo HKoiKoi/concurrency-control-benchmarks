@@ -56,6 +56,9 @@ public class EnrollmentController {
 		return ResponseEntity.ok("[Case 2: Spin Lock] 수강신청이 성공적으로 완료되었습니다.");
 	}
 
+	/**
+	 * Case 3: Pub/Sub Lock API
+	 */
 	@PostMapping("/pub-sub-lock")
 	public ResponseEntity<String> enrollWithPubSubLock(
 		@Valid @RequestBody EnrollmentCreateRequest request

@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.stu.benchmark.domain.enrollment.dto.EnrollmentCreateRequest;
@@ -23,6 +24,12 @@ public class PubSubLockFacade {
 
 	private final EnrollmentService enrollmentService;
 
+	@Value("${redisson.lock.wait-time:5000}")
+	private long waitTimeMillis;
+
+	@Value("${redisson.lock.lease-time:3000}")
+	private long leaseTimeMillis;
+
 	/**
 	 * [Case 3: Pub/Sub Lock] 강의 엔터티에 대해 Pub/Sub Lock을 적용하여 동시성 문제를 방지하는 수강신청
 	 */
@@ -34,11 +41,9 @@ public class PubSubLockFacade {
 		boolean available;
 
 		try {
-			// 락 획득 시도
-			// waitTime: 락 획득을 시도하는 최대 대기 시간 (5초)
-			// leaseTime: 락이 자동으로 해제되는 시간 (3초)
-			// TODO: 테스트 할 때 waitTime과 leaseTime을 조정하여 성능 평가(e.g., waitTime 3~10초, leaseTime 2~5초, 워치독(-1))
-			available = lock.tryLock(5, 3, TimeUnit.SECONDS);
+			// waitTime: 락 획득을 시도하는 최대 대기 시간
+			// leaseTime: 락이 자동으로 해제되는 시간
+			available = lock.tryLock(waitTimeMillis, leaseTimeMillis, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new LockAcquisitionException("Pub/Sub Lock 대기 중 스레드 인터럽트 발생", e);
@@ -52,8 +57,8 @@ public class PubSubLockFacade {
 		try {
 			enrollmentService.enroll(request);
 		} finally {
-			// 락 해제
-			if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+			// isHeldByCurrentThread()가 true이면 락을 보유 중임이 보장되므로 isLocked() 중복 체크 불필요
+			if (lock.isHeldByCurrentThread()) {
 				lock.unlock();
 			}
 		}
