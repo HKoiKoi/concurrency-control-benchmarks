@@ -52,6 +52,11 @@ services:
     networks:
       - concurrency-control-network
     healthcheck: *was-healthcheck
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
     restart: no
 
   # WAS#2
@@ -77,6 +82,11 @@ services:
     networks:
       - concurrency-control-network
     healthcheck: *was-healthcheck
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
     restart: no
 
   # MySQL
