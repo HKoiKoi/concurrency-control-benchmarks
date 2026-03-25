@@ -57,7 +57,6 @@ public class PubSubLockFacade {
 		try {
 			enrollmentService.enroll(request);
 		} finally {
-			// isHeldByCurrentThread()가 true이면 락을 보유 중임이 보장되므로 isLocked() 중복 체크 불필요
 			if (lock.isHeldByCurrentThread()) {
 				lock.unlock();
 			}
