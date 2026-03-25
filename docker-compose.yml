@@ -240,6 +240,16 @@ services:
       - ngrinder_controller_data:/opt/ngrinder-controller
     networks:
       - concurrency-control-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -q --spider http://localhost:80 || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     restart: no
 
   # nGrinder Agent
@@ -249,15 +259,14 @@ services:
     container_name: ngrinder-agent
     command: ngrinder-controller:80
     environment:
-      - GRINDER_AGENT_CONTROLLER_ADDR=ngrinder-controller
-      - GRINDER_AGENT_CONTROLLER_PORT=16001
       - GRINDER_AGENT_JVM_OPTS=-Xms3g -Xmx3g
     deploy:
       resources:
         limits:
           memory: 4G
     depends_on:
-      - ngrinder-controller
+      ngrinder-controller:
+        condition: service_healthy
     networks:
       - concurrency-control-network
     restart: no

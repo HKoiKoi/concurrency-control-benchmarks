@@ -4,7 +4,6 @@ import static org.hamcrest.Matchers.*
 import net.grinder.script.GTest
 import net.grinder.scriptengine.groovy.junit.GrinderRunner
 import net.grinder.scriptengine.groovy.junit.annotation.BeforeProcess
-import net.grinder.scriptengine.groovy.junit.annotation.BeforeThread
 import net.grinder.scriptengine.groovy.junit.annotation.AfterProcess
 import org.junit.Before
 import org.junit.Test
@@ -23,9 +22,8 @@ class EnrollmentBurstTest {
     public static HTTPRequest request
     public static Map<String, String> headers = [:]
 
-    // 학생 ID 및 동적 스케쥴 저장을 위한 큐/리스트
+    // 학생 ID 저장을 위한 큐
     public static ConcurrentLinkedQueue<Integer> studentIdQueue = new ConcurrentLinkedQueue<>()
-    public static List<Integer> arrivalSchedule = []
 
     // 테스트 환경 설정
     public static final String TARGET_IP = "host.docker.internal"
@@ -37,7 +35,6 @@ class EnrollmentBurstTest {
     // public static final int TOTAL_USERS = 600
     
     public static final int TEST_DURATION_SECONDS = 10
-    public static final double AVERAGE_LAMBDA = TOTAL_USERS / (double) TEST_DURATION_SECONDS
 
     // 테스트 전략 선택(테스트 시마다 주석을 해제하며 교체)
     // public static final String STRATEGY = "no-lock"
@@ -47,21 +44,6 @@ class EnrollmentBurstTest {
 
     public static String targetUrl = "http://${TARGET_IP}:${TARGET_PORT}/v1/enrollments/${STRATEGY}"
     public static String resetUrl = "http://${TARGET_IP}:${TARGET_PORT}/v1/benchmark/reset"
-
-    // 푸아송 분포 난수 생성기 (Knuth's Algorithm)
-    private static int getPoissonCount(double mean) {
-
-        double L = Math.exp(-mean)
-        int k = 0
-        double p = 1.0
-
-        do {
-            k++
-            p *= ThreadLocalRandom.current().nextDouble()
-        } while (p > L)
-
-        return k - 1
-    }
 
     @BeforeProcess
     public static void beforeProcess() {
@@ -73,31 +55,35 @@ class EnrollmentBurstTest {
         request = new HTTPRequest()
         headers.put("Content-Type", "application/json")
 
-        // [DB 데이터 클렌징] 테스트 시작 전 환경 초기화
-        grinder.logger.info(">>> [DB 초기화] 테스트 전략 세팅 중: ${STRATEGY}")
+        // [DB 데이터 클렌징] 프로세스 0에서만 초기화하여 멀티 프로세스 환경의 중복 초기화 방지
+        if (grinder.processNumber == 0) {
+            grinder.logger.info(">>> [DB 초기화] 테스트 전략 세팅 중: ${STRATEGY}")
 
-        try {
-            
-            HTTPResponse resetResponse = request.POST(resetUrl, "".getBytes(), headers)
+            try {
 
-            if (resetResponse.statusCode == 200) {
-                grinder.logger.info(">>> [DB 초기화 완료] 응답: ${resetResponse.bodyText}")
-            } else {
-                grinder.logger.error(">>> [DB 초기화 실패] HTTP 상태 코드: ${resetResponse.statusCode}")
+                HTTPResponse resetResponse = request.POST(resetUrl, "".getBytes(), headers)
+
+                if (resetResponse.statusCode == 200) {
+                    grinder.logger.info(">>> [DB 초기화 완료] 응답: ${resetResponse.bodyText}")
+                } else {
+                    grinder.logger.error(">>> [DB 초기화 실패] HTTP 상태 코드: ${resetResponse.statusCode}")
+                }
+            } catch (Exception e) {
+                grinder.logger.error(">>> [DB 초기화 에러] 원인: ${e.message}")
             }
-        } catch (Exception e) {
-            grinder.logger.error(">>> [DB 초기화 에러] 원인: ${e.message}")
         }
 
-        test.record(request)
-
-        // [푸아송 스케줄링] 매 실행마다 다른 람다 리스트 생성
+        //  [푸아송 리스트 생성 및 로깅]
+        // 실제 쓰레드를 제어하진 않지만, 이번 실험의 '부하 설계도'를 기록하는 역할입니다.
         arrivalSchedule = (1..TEST_DURATION_SECONDS).collect { getPoissonCount(AVERAGE_LAMBDA) }
 
         grinder.logger.info("==================================================")
-        grinder.logger.info("[실험 설정] 평균 유입률(λ): {} users/sec", AVERAGE_LAMBDA)
-        grinder.logger.info("[동적 푸아송 유입률 리스트]: {}", arrivalSchedule)
+        grinder.logger.info("[실험 설계 기록] 프로세스 {}번의 부하 분포 예측", grinder.processNumber)
+        grinder.logger.info("평균 유입률(λ): {} users/sec", AVERAGE_LAMBDA)
+        grinder.logger.info("초당 유입 분포(Poisson): {}", arrivalSchedule)
         grinder.logger.info("==================================================")
+
+        test.record(request)
 
         // [프로세스별 학생 ID 할당] 중복 ID 방지를 위해 범위를 나눔
         int processNum = grinder.processNumber
@@ -109,15 +95,17 @@ class EnrollmentBurstTest {
 
         studentIdQueue.clear()
         studentIdQueue.addAll(studentIds)
-        
-        grinder.logger.info(">>> [데이터 준비 완료] 무작위 학생 ID 1,200개 셔플 및 큐 적재 완료")
+
+        grinder.logger.info(">>> [데이터 준비 완료] 프로세스 {} 학생 ID {} ~ {} (총 {}개) 셔플 및 큐 적재 완료",
+            processNum, startId, endId, studentIds.size())
     }
 
     @Test
     public void testEnrollmentBurst() {
 
-        // [푸아송 도착 과정 시뮬레이션]
-        // 0 ~ 10초 사이의 시점을 균등하게 선택하면 전체적으로 푸아송 분포가 형성됨
+        // [버스트 트래픽 시뮬레이션]
+        // 각 Vuser가 [0, TEST_DURATION_SECONDS) 구간에서 균등 랜덤 딜레이를 가지면서
+        // 지정된 시간 창(Time Window) 내에 집중적으로 요청이 몰리는 버스트 패턴을 재현함
         long randomDelay = ThreadLocalRandom.current().nextLong(TEST_DURATION_SECONDS * 1000)
         grinder.sleep(randomDelay, 0)
 
@@ -126,7 +114,7 @@ class EnrollmentBurstTest {
 
         // 1,200명이 모두 소진된 경우 더 이상 API를 쏘지 않고 조기 종료
         if (studentId == null) {
-            grinder.logger.info(">>> [테스트 경고] 준비된 모든 학생 ID(1,200개)가 소진되었습니다.")
+            grinder.logger.info(">>> [테스트 경고] 이 프로세스에 할당된 학생 ID가 모두 소진되었습니다.")
             return
         }
 
