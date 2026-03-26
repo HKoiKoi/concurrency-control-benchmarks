@@ -27,9 +27,10 @@ redisson:
 logging:
   level:
     root: warn
-    com.stu.benchmark: debug
+    com.stu.benchmark: info
     org.hibernate.SQL: error
     com.zaxxer.hikari: debug
+    org.hibernate.orm.jdbc.bind: error
 
 management:
   tracing:
