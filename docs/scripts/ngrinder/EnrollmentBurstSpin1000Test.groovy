@@ -106,7 +106,7 @@ class EnrollmentBurstWarmUpTest {
     public void testEnrollmentBurst() {
 
         // 지수 감쇠형 버스트 시뮬레이션
-        double u = TheadLocalRandom.current().nextDouble()
+        double u = ThreadLocalRandom.current().nextDouble()
         double lambdaShape = 1.0
         double maxTime = (double) TEST_DURATION_SECONDS
 
