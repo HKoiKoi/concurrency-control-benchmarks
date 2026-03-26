@@ -243,6 +243,18 @@
           "legendFormat": "{{lock_type}} ({{instance}})",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (lock_type) (irate(benchmark_lock_service_time_seconds_count{job=\"concurrency-control\"}[1m])) * 3",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "TPS (Transactions Per Second)",
