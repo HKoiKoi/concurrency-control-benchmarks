@@ -98,9 +98,11 @@ class EnrollmentBurstPubSub800Test {
         test.record(request)
 
         // 프로세스별 학생 ID 할당
-        int processNumber = grinder.processNumber
-        int startId = (processNumber * 200) + 1
-        int endId = (processNumber + 1) * 200
+        int totalProcesses = grinder.getProperties().getInt("grinder.processes", 1)
+        int usersPerProcess = TOTAL_USERS / totalProcesses
+
+        int startId = (grinder.processNumber * usersPerProcess) + 1
+        int endId = (grinder.processNumber + 1) * usersPerProcess
 
         List<Integer> studentIds = (startId..endId).toList()
         Collections.shuffle(studentIds) // 학생 ID 랜덤 섞기
@@ -109,7 +111,7 @@ class EnrollmentBurstPubSub800Test {
         studentIdQueue.addAll(studentIds)
 
         grinder.logger.info(">>> [데이터 준비 완료] 프로세스 {} 학생 ID {} ~ {} (총 {}명) 큐 적재 완료",
-            processNumber, startId, endId, studentIds.size())
+            grinder.processNumber, startId, endId, studentIds.size())
     }
 
     @Test
