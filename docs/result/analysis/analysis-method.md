@@ -36,7 +36,7 @@
 
 ### Worst Mean Latency (가장 느림, 최대)
 
-- $n$번의 테스트 중 가장 낮은 `Mean Latency`
+- $n$번의 테스트 중 가장 높은(느린) `Mean Latency`
 
 ### Overall Mean Latency (평균)
 
@@ -45,7 +45,7 @@
 
 ### Best Mean Latency (가장 빠름, 최소)
 
-- $n$번의 테스트 중 가장 높은 `Mean Latency`
+- $n$번의 테스트 중 가장 낮은(빠른) `Mean Latency`
 
 ---
 
@@ -85,3 +85,33 @@
 - 로그 정규 분포의 누적 분포 함수(CDF)의 역함수를 이용하여 시간 값이 가장 큰(오래 걸린) 상위 5%(0.95; 높은 시간) 지점 찾음
 - Z-스코어($Z_{0.95} \approx 1.64485$)를 사용하여 95% 경계선을 찾음
   - $$p95 = \exp(\underbrace{\mu_{log}}_{출발점} + \underbrace{1.64485 \cdot \sigma_{log}}_{이동 거리})$$
+
+---
+
+## 표준편차($\sigma$) 및 $2\sigma$ 신뢰 구간 안정성
+
+- 전체 평균인 $\mu_{total}$ `Overall Mean Latency` 결과 활용
+- $n_i$: `Tests` (요청 건수)
+- $\mu_i$: `Mean_Test_Time` (평균 지연 시간)
+- $\sigma_i$: `Test_Time_Standard_Deviation` (표준편차)
+- $N$: 전체 테스트 건수의 합계 ($\Sigma_{i=1}^kn_i$)
+
+### 표준편차($\sigma$)
+
+#### $\mu_{total}$을 가져오기
+
+#### 그룹 내 제곱합($SS_{within}$) 구하기
+
+- $SS_{within} = \Sigma_{i=1}^{k}(n_i-1)\sigma_i^2$
+
+#### 그룹 간 제곱합($SS_{between}$)
+
+- $SS_{between}=\Sigma_{i=1}^{k}n_i(\mu_i-\mu_{total})^2$
+
+#### 최종 통합 표준편차($\sigma_{total}$)
+
+- $\sigma_{total}=\sqrt{\frac{SS_{within} + SS_{between}}{N-1}}$
+
+### $2\sigma$ 신뢰 구간
+
+$$[\mu_{total} - 2\sigma_{total}, \mu_{total} + 2\sigma_{total}]$$
