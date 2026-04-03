@@ -8,15 +8,11 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-@Testcontainers
 @TestConfiguration(proxyBeanMethods = false)
 public class TestConfig {
 
-	@Container
 	public static GenericContainer<?> zookeeperContainer = new GenericContainer<>(
 		DockerImageName.parse("zookeeper:3.9"))
 		.withExposedPorts(2181)

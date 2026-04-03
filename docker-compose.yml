@@ -51,7 +51,7 @@ services:
       redis:
         condition: service_healthy
       zookeeper:
-        condition: service_started
+        condition: service_healthy
     networks:
       - concurrency-control-network
     healthcheck: *was-healthcheck
@@ -84,7 +84,7 @@ services:
       redis:
         condition: service_healthy
       zookeeper:
-        condition: service_started
+        condition: service_healthy
     networks:
       - concurrency-control-network
     healthcheck: *was-healthcheck
@@ -189,6 +189,12 @@ services:
     networks:
       - concurrency-control-network
     restart: no
+    healthcheck:
+      test: ["CMD-SHELL", "zkServer.sh status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Prometheus
   prometheus:

@@ -48,11 +48,11 @@ public class ZookeeperLockFacade {
 				try {
 					// waitTime: 앞 순번의 노드가 삭제될 때까지(락 획득을 위해) 대기하는 최대 시간
 					available = mutex.acquire(waitTimeMillis, TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					throw new LockAcquisitionException("Zookeeper Lock 대기 중 스레드 인터럽트 발생", e);
 				} catch (Exception e) {
-					if (e instanceof InterruptedException) {
-						Thread.currentThread().interrupt();
-					}
-					throw new RuntimeException("Zookeeper Lock 대기 중 오류 발생", e);
+					throw new LockAcquisitionException("Zookeeper Lock 획득 중 예기치 않은 오류 발생", e);
 				}
 
 				if (!available) {
