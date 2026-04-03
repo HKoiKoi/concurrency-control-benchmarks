@@ -38,6 +38,7 @@ public class PubSubLockFacade {
 		String lockKey = LockType.REDISSON.generateKey(request.courseId());
 		RLock lock = redissonClient.getLock(lockKey);
 
+		boolean acquired = false;
 		try {
 			// waitTime: 락 획득을 시도하는 최대 대기 시간
 			// leaseTime: 락이 자동으로 해제되는 시간
@@ -48,15 +49,14 @@ public class PubSubLockFacade {
 					request.courseId(), request.studentId());
 				throw new LockAcquisitionException("락 획득 대기 시간 초과");
 			}
+
+			acquired = true;
+			enrollmentService.enroll(request);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new LockAcquisitionException("Pub/Sub Lock 대기 중 스레드 인터럽트 발생", e);
-		}
-
-		try {
-			enrollmentService.enroll(request);
 		} finally {
-			if (lock.isHeldByCurrentThread()) {
+			if (acquired && lock.isHeldByCurrentThread()) {
 				lock.unlock();
 			}
 		}
