@@ -53,7 +53,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 50,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -62,7 +62,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -205,6 +205,51 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pessimistic"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8e5ad2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spin"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#33b2cc",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pub-sub"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f2994a",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -217,7 +262,7 @@
       "id": 1,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true,
@@ -238,9 +283,9 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum by (lock_type, instance) (irate(benchmark_lock_service_time_seconds_count{job=\"concurrency-control\"}[1m]))",
+          "expr": "sum by (lock_type) (irate(benchmark_lock_service_time_seconds_count{job=\"concurrency-control\"}[1m]))",
           "instant": false,
-          "legendFormat": "{{lock_type}} ({{instance}})",
+          "legendFormat": "{{lock_type}}",
           "range": true,
           "refId": "A"
         }
@@ -268,7 +313,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 50,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -277,7 +322,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -420,6 +465,51 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spin"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#33b2cc",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pessimistic"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8e5ad2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pub-sub"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f2994a",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -432,7 +522,7 @@
       "id": 2,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -447,8 +537,8 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (lock_type, instance) (irate(benchmark_lock_service_time_seconds_sum{job=\"concurrency-control\"}[1m])) \n/ \nsum by (lock_type, instance) (irate(benchmark_lock_service_time_seconds_count{job=\"concurrency-control\"}[1m]))",
-          "legendFormat": "{{lock_type}} ({{instance}})",
+          "expr": "sum by (lock_type) (\n  irate(benchmark_lock_total_time_seconds_sum{job=\"concurrency-control\"}[1m])\n) \n/ \nsum by (lock_type) (\n  irate(benchmark_lock_total_time_seconds_count{job=\"concurrency-control\"}[1m])\n)",
+          "legendFormat": "{{lock_type}}",
           "range": true,
           "refId": "A"
         }
@@ -475,7 +565,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 50,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -484,7 +574,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -627,6 +717,51 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pessimistic"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8e5ad2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spin"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#33b2cc",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pub-sub"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f2994a",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -639,7 +774,7 @@
       "id": 3,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -654,8 +789,8 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, lock_type, instance) (irate(benchmark_lock_service_time_seconds_bucket{job=\"concurrency-control\"}[1m])))",
-          "legendFormat": "{{lock_type}} ({{instance}})",
+          "expr": "histogram_quantile(0.95, \n  sum by (le, lock_type) (\n    irate(benchmark_lock_total_time_seconds_bucket{job=\"concurrency-control\"}[1m])\n  )\n)",
+          "legendFormat": "{{lock_type}}",
           "range": true,
           "refId": "A"
         }
@@ -681,7 +816,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "락 획득 시도부터 획득 성공 직전까지의 시간 (W)",
+      "description": "락 획득 시도부터 획득 성공 직전까지의 시간 (W)\n\n락 획득을 위한 경합 시간 (Queueing Delay)",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -696,7 +831,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 50,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -705,7 +840,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -845,6 +980,51 @@
                 "value": {
                   "dash": [10, 10],
                   "fill": "dash"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pub-sub"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f2994a",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spin"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#33b2cc",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pessimistic"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8e5ad2",
+                  "mode": "fixed"
                 }
               }
             ]
@@ -860,10 +1040,12 @@
       "id": 4,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Name",
+          "sortDesc": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -875,8 +1057,8 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (lock_type, instance) (irate(benchmark_lock_wait_time_seconds_sum{job=\"concurrency-control\"}[1m]))\n/\nsum by (lock_type, instance) (irate(benchmark_lock_wait_time_seconds_count{job=\"concurrency-control\"}[1m]))",
-          "legendFormat": "{{lock_type}} ({{instance}})",
+          "expr": "sum by (lock_type) (irate(benchmark_lock_wait_time_seconds_sum{job=\"concurrency-control\"}[1m]))\n/\nsum by (lock_type) (irate(benchmark_lock_wait_time_seconds_count{job=\"concurrency-control\"}[1m]))",
+          "legendFormat": "{{lock_type}}",
           "range": true,
           "refId": "A"
         }
@@ -889,7 +1071,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "락 획득 후 로직 수행 및 트랜잭션 종료까지의 시간 (S)",
+      "description": "락 획득 후 로직 수행 및 트랜잭션 종료까지의 시간 (S)\n\n락 점유 후 순수 로직 실행 시간 (Processing Time). * Pessimistic Lock의 경우 구조적 한계로 인해 Wait Time이 Service Time에 포함되어 측정됨을 주의할 것.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -904,7 +1086,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 50,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -913,7 +1095,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1056,6 +1238,51 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pessimistic"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#8e5ad2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spin"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#33b2cc",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pub-sub"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#f2994a",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -1068,7 +1295,7 @@
       "id": 5,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -1083,8 +1310,8 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (lock_type, instance) (irate(benchmark_lock_service_time_seconds_sum{job=\"concurrency-control\"}[1m]))\n/\nsum by (lock_type, instance) (irate(benchmark_lock_service_time_seconds_count{job=\"concurrency-control\"}[1m]))",
-          "legendFormat": "{{lock_type}} ({{instance}})",
+          "expr": "sum by (lock_type) (irate(benchmark_lock_service_time_seconds_sum{job=\"concurrency-control\"}[1m]))\n/\nsum by (lock_type) (irate(benchmark_lock_service_time_seconds_count{job=\"concurrency-control\"}[1m]))",
+          "legendFormat": "{{lock_type}}",
           "range": true,
           "refId": "A"
         }
@@ -1125,7 +1352,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 50,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -1134,7 +1361,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1196,6 +1423,21 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ffffff",
+                  "mode": "fixed"
+                }
+              }
+            ]
           }
         ]
       },
@@ -1208,7 +1450,7 @@
       "id": 6,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -1223,140 +1465,13 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "system_cpu_usage{job=\"concurrency-control\", instance=~\"was1.*|was2.*\"}",
-          "legendFormat": "{{instance}}",
+          "expr": "avg(system_cpu_usage{job=\"concurrency-control\", instance=~\"was1.*|was2.*\"})",
+          "legendFormat": "System CPU Usage",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "WAS CPU Usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "description": "각 WAS의 실시간 힙 메모리 사용량",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "opacity",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "was2:8080"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#33b2cc",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "was1:8080"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#8e5ad2",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 12,
-        "y": 35
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": ["mean", "max"],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.4.1",
-      "targets": [
-        {
-          "editorMode": "code",
-          "expr": "sum by (instance) (\n  jvm_memory_used_bytes{job=\"concurrency-control\", area=\"heap\"}\n)",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "WAS Heap Memory Usage",
       "type": "timeseries"
     },
     {
@@ -1379,7 +1494,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 15,
+            "fillOpacity": 50,
             "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
@@ -1388,7 +1503,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 3,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1430,7 +1545,22 @@
               {
                 "id": "color",
                 "value": {
-                  "fixedColor": "#4ab577",
+                  "fixedColor": "#ffffff",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Redis CPU Usage"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ffffff",
                   "mode": "fixed"
                 }
               }
@@ -1440,14 +1570,14 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 45
+        "w": 12,
+        "x": 12,
+        "y": 35
       },
       "id": 8,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -1463,7 +1593,7 @@
         {
           "editorMode": "code",
           "expr": "irate(redis_cpu_user_seconds_total[1m]) + irate(redis_cpu_sys_seconds_total[1m])",
-          "legendFormat": "Redis",
+          "legendFormat": "Redis CPU Usage",
           "range": true,
           "refId": "A"
         }
@@ -1473,19 +1603,20 @@
     }
   ],
   "preload": false,
+  "refresh": "auto",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "New dashboard",
+  "title": "Concurrency Control Dashboard",
   "uid": "stf9n6w",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }
