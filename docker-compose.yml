@@ -43,6 +43,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - ZOOKEEPER_HOST=zookeeper
+      - ZOOKEEPER_PORT=2181
       - JAVA_OPTS=-Xms1536m -Xmx1536m
       - TZ=Asia/Seoul
     depends_on:
@@ -76,6 +78,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - ZOOKEEPER_HOST=zookeeper
+      - ZOOKEEPER_PORT=2181
       - JAVA_OPTS=-Xms1536m -Xmx1536m
       - TZ=Asia/Seoul
     depends_on:
