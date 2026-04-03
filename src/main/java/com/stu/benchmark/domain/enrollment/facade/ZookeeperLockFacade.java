@@ -47,6 +47,8 @@ public class ZookeeperLockFacade {
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			throw new LockAcquisitionException("Zookeeper Lock 대기 중 스레드 인터럽트 발생", e);
+		} catch (LockAcquisitionException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new LockAcquisitionException("Zookeeper Lock 획득 중 예기치 않은 오류 발생", e);
 		}
