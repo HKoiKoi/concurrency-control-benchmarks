@@ -1,9 +1,8 @@
-import os
-from datetime import datetime
-
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pandas as pd
+from datetime import datetime
 
 
 def calculate_stability_metrics(group):
@@ -91,7 +90,7 @@ def analyze_stability(df_all):
     plt.figure(figsize=(12, 7))
 
     # 락 타입 순서 설정
-    lock_order = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock']
+    lock_order = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock', 'ZooKeeper Lock']
 
     stability_summary['Lock'] = pd.Categorical(stability_summary['Lock'], categories=lock_order, ordered=True)
     stability_summary = stability_summary.sort_values(['Lock', 'Vuser'])

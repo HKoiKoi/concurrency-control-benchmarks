@@ -24,7 +24,8 @@ def load_and_preprocess_ngrinder_data(file_path):
     lock_name_mapping = {
         'pessimistic-lock': 'Pessimistic Lock',
         'spin-lock': 'Spin Lock',
-        'pub-sub-lock': 'Pub/Sub Lock'
+        'pub-sub-lock': 'Pub/Sub Lock',
+        'zookeeper-lock': 'ZooKeeper Lock'
     }
     lock_type = lock_name_mapping.get(raw_lock_type, raw_lock_type)
 
