@@ -54,7 +54,8 @@ def load_all_data(data_dir):
     """
 
     # 결과 파일 리스트 생성
-    all_files = glob.glob(os.path.join(data_dir, '*result.csv'))
+    search_pattern = os.path.join(data_dir, '**', '*result.csv')
+    all_files = glob.glob(search_pattern, recursive=True)
 
     df_list = []
     for file in all_files:
