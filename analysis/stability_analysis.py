@@ -1,8 +1,9 @@
+import os
+from datetime import datetime
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import pandas as pd
-from datetime import datetime
 
 
 def calculate_stability_metrics(group):
@@ -123,6 +124,8 @@ def analyze_stability(df_all):
     plt.xlabel('Vuser', fontsize=12)
     plt.ylabel('Latency (ms)', fontsize=12)
     plt.legend()  # 범례 표시
+    plt.ylim(-50, 2500)
+    plt.xticks(rotation=45, ha='right', fontsize=10)
     plt.grid(axis='y', linestyle='--', alpha=0.5)  # 가로 점섬 그리드
     plt.tight_layout()  # 여백 자동 조절
 
