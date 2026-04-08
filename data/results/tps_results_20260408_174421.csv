@@ -1,0 +1,13 @@
+﻿Lock,Vuser,Worst_Mean_TPS,Overall_Mean_TPS,Best_Mean_TPS,Average_Peak_TPS,Test_Count
+Pessimistic Lock,500,50.0,54.17,62.5,160.5,3
+Pessimistic Lock,800,66.67,75.52,80.0,142.5,3
+Pessimistic Lock,1000,62.5,81.94,100.0,192.5,3
+Pub/Sub Lock,500,41.58,47.19,50.0,114.67,3
+Pub/Sub Lock,800,66.67,75.56,80.0,207.33,3
+Pub/Sub Lock,1000,83.33,94.41,100.0,255.0,3
+Spin Lock,500,50.0,58.29,62.5,149.33,3
+Spin Lock,800,66.67,75.56,80.0,198.33,3
+Spin Lock,1000,50.0,61.31,71.43,206.67,3
+ZooKeeper Lock,500,41.67,55.56,62.5,158.0,3
+ZooKeeper Lock,800,66.67,71.11,80.0,137.83,3
+ZooKeeper Lock,1000,83.33,94.41,100.0,207.17,3
