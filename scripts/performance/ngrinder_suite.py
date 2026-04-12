@@ -45,29 +45,43 @@ IDS = {
 
 # 테스트 스케줄 정의 (ID, 설명, 대기시간(분), 락전략(파일명용), Vuser(파일명용))
 SCHEDULE = [
+    # --- 본 테스트 전 웜업 ---
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 5, "pessimistic-lock", "warmup"),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 5, "spin-lock", "warmup"),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 5, "pubsub-lock", "warmup"),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 5, "zookeeper-lock", "warmup"),
+
     # --- 비관적 락 ---
-    # (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
-    (IDS["PESSIMISTIC 500"], "비관적 락 Vuser 500 테스트", 1, "pessimistic-lock", 500),
-    # (IDS["PESSIMISTIC 800"], "비관적 락 Vuser 800 테스트", 7, "pessimistic-lock", 800),
-    # (IDS["PESSIMISTIC 1000"], "비관적 락 Vuser 1000 테스트", 7, "pessimistic-lock", 1000),
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
+    (IDS["PESSIMISTIC 500"], "비관적 락 Vuser 500 테스트", 7, "pessimistic-lock", 500),
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
+    (IDS["PESSIMISTIC 800"], "비관적 락 Vuser 800 테스트", 7, "pessimistic-lock", 800),
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
+    (IDS["PESSIMISTIC 1000"], "비관적 락 Vuser 1000 테스트", 7, "pessimistic-lock", 1000),
 
     # --- 스핀 락 ---
-    # (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
-    # (IDS["SPIN 500"], "스핀 락 Vuser 500 테스트", 7, "spin-lock", 500),
-    # (IDS["SPIN 800"], "스핀 락 Vuser 800 테스트", 7, "spin-lock", 800),
-    # (IDS["SPIN 1000"], "스핀 락 Vuser 1000 테스트", 7, "spin-lock", 1000),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
+    (IDS["SPIN 500"], "스핀 락 Vuser 500 테스트", 7, "spin-lock", 500),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
+    (IDS["SPIN 800"], "스핀 락 Vuser 800 테스트", 7, "spin-lock", 800),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
+    (IDS["SPIN 1000"], "스핀 락 Vuser 1000 테스트", 7, "spin-lock", 1000),
 
     # --- 펍섭 락 ---
-    # (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
-    # (IDS["PUB/SUB 500"], "펍섭 락 Vuser 500 테스트", 7, "pubsub-lock", 500),
-    # (IDS["PUB/SUB 800"], "펍섭 락 Vuser 800 테스트", 7, "pubsub-lock", 800),
-    # (IDS["PUB/SUB 1000"], "펍섭 락 Vuser 1000 테스트", 7, "pubsub-lock", 1000),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
+    (IDS["PUB/SUB 500"], "펍섭 락 Vuser 500 테스트", 7, "pubsub-lock", 500),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
+    (IDS["PUB/SUB 800"], "펍섭 락 Vuser 800 테스트", 7, "pubsub-lock", 800),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
+    (IDS["PUB/SUB 1000"], "펍섭 락 Vuser 1000 테스트", 7, "pubsub-lock", 1000),
 
     # --- 주키퍼 락 ---
-    # (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
-    # (IDS["ZOOKEEPER 500"], "주키퍼 락 Vuser 500 테스트", 7, "zookeeper-lock", 500),
-    # (IDS["ZOOKEEPER 800"], "주키퍼 락 Vuser 800 테스트", 7, "zookeeper-lock", 800),
-    # (IDS["ZOOKEEPER 1000"], "주키퍼 락 Vuser 1000 테스트", 7, "zookeeper-lock", 1000),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
+    (IDS["ZOOKEEPER 500"], "주키퍼 락 Vuser 500 테스트", 7, "zookeeper-lock", 500),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
+    (IDS["ZOOKEEPER 800"], "주키퍼 락 Vuser 800 테스트", 7, "zookeeper-lock", 800),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
+    (IDS["ZOOKEEPER 1000"], "주키퍼 락 Vuser 1000 테스트(마지막 테스트)", 1, "zookeeper-lock", 1000),
 ]
 
 
