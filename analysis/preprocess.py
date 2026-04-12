@@ -18,7 +18,7 @@ def load_and_preprocess_ngrinder_data(file_path):
     # 쪼갠 단어들 중에서 락(Lock) 원본 이름, Vuser(가상 사용자 수), 테스트 순서 추출
     raw_lock_type = "-".join(parts[:-2])
     vuser_count = int(parts[-2])
-    test_order = parts[-1]
+    test_order = int(parts[-1])
 
     # 락 이름 포맷 변경
     lock_name_mapping = {

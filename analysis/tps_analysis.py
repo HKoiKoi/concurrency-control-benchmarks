@@ -1,10 +1,10 @@
-import matplotlib.pyplot as plt
 import os
+
+import matplotlib.pyplot as plt
 import pandas as pd
-from datetime import datetime
 
 
-def analyze_tps(df_all):
+def analyze_tps(df_all, max_round):
     """
     전처리된 전체 데이터(df_all)를 받아서 TPS(초당 처리량) 지표를 계산하고
     막대 그래프로 시각화해 주는 함수입니다.
@@ -32,8 +32,7 @@ def analyze_tps(df_all):
 
     os.makedirs('../data/results', exist_ok=True)
 
-    current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
-    file_name = f'../data/results/tps_results_{current_time}.csv'
+    file_name = f'../data/results/tps_results_{max_round}.csv'
 
     summary_stats.to_csv(file_name, index=False, encoding='utf-8-sig')
     print(f"TPS 결과 테이블이 '{file_name}'로 저장되었습니다.")
@@ -95,7 +94,7 @@ def analyze_tps(df_all):
     plt.tight_layout()
 
     os.makedirs('../data/figures', exist_ok=True)
-    img_name = f'../data/figures/tps_graph_{current_time}.png'
+    img_name = f'../data/figures/tps_graph_{max_round}.png'
 
     plt.savefig(img_name, dpi=300, bbox_inches='tight')
     print(f"TPS 그래프가 '{img_name}'로 저장되었습니다.")

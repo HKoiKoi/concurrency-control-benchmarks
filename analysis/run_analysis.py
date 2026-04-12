@@ -1,4 +1,5 @@
 import platform
+
 import matplotlib.pyplot as plt
 
 from latency_analysis import analyze_latency
@@ -27,20 +28,23 @@ if __name__ == "__main__":
 
     # 데이터가 정상적으로 불러와졌다면 분석 시작
     if df_all is not None:
+        max_round = df_all['Order'].max()
+        print(f"\n✅ 감지된 최종 테스트 회차: {max_round}회")
+
         print("\n" + "=" * 50)
         print("1. 초당 처리량(TPS) 분석을 시작합니다.")
         print("=" * 50)
-        analyze_tps(df_all)
+        analyze_tps(df_all, max_round)
 
         print("\n" + "=" * 50)
         print("2. 지연 시간 및 p95 Latency 분석을 시작합니다.")
         print("=" * 50)
-        analyze_latency(df_all)
+        analyze_latency(df_all, max_round)
 
         print("\n" + "=" * 50)
         print("3. 안정성 및 2-sigma 분석을 시작합니다.")
         print("=" * 50)
-        analyze_stability(df_all)
+        analyze_stability(df_all, max_round)
 
         print("\n모든 분석이 성공적으로 완료되었습니다.")
 

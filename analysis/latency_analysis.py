@@ -1,8 +1,8 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import pandas as pd
-from datetime import datetime
 
 
 def calculate_run_metrics(group):
@@ -58,7 +58,7 @@ def calculate_run_metrics(group):
     return pd.Series({'Run_Mean_Latency': mu_total, 'Run_p95_Latency': p95})
 
 
-def analyze_latency(df_all):
+def analyze_latency(df_all, max_round):
     """
     전처리된 전체 데이터(df_all)를 받아 응답 시간(Latency) 지표를 분석하고
     막대 그래프로 보여주는 함수입니다.
@@ -83,8 +83,7 @@ def analyze_latency(df_all):
 
     os.makedirs('../data/results', exist_ok=True)
 
-    current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
-    file_name = f'../data/results/latency_results_{current_time}.csv'
+    file_name = f'../data/results/latency_results_{max_round}.csv'
 
     summary_stats.to_csv(file_name, index=False, encoding='utf-8-sig')
     print(f"Latency 결과 테이블이 '{file_name}'로 저장되었습니다.")
@@ -146,7 +145,7 @@ def analyze_latency(df_all):
     plt.tight_layout()
 
     os.makedirs('../data/figures', exist_ok=True)
-    img_name = f'../data/figures/latency_graph_{current_time}.png'
+    img_name = f'../data/figures/latency_graph_{max_round}.png'
 
     plt.savefig(img_name, dpi=300, bbox_inches='tight')
     print(f"Latency 그래프가 '{img_name}'로 저장되었습니다.")

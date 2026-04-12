@@ -67,11 +67,9 @@ class ZooKeeper800Test {
 
         // [DB 데이터 클렌징] 프로세스 0에서만 초기화
         if (grinder.processNumber == 0) {
-
             grinder.logger.info(">>> [DB 초기화] 테스트 전략 세팅 중: ${STRATEGY}")
 
             try {
-
                 HTTPResponse resetResponse = request.POST(resetUrl, "".getBytes(), headers)
 
                 if (resetResponse.statusCode == 200) {
@@ -92,7 +90,7 @@ class ZooKeeper800Test {
 
         if (waitTime > 0) {
             grinder.logger.info(">>> [대기] 프로세스 ${grinder.processNumber} : 완벽한 동시 출발을 위해 ${waitTime}ms 대기 중...")
-            grinder.sleep(waitTime, 0)
+            Thread.sleep(waitTime)
         }
 
         // 매 프로세스 시작 시 실제 유입 카운트 배열 초기화
@@ -139,8 +137,7 @@ class ZooKeeper800Test {
             actualArrivals.incrementAndGet(fireSecond)
         }
 
-        // 계산된 시간만큼 대기 후 발사
-        grinder.sleep(randomDelay, 0)
+        grinder.sleep(randomDelay)
 
         // 큐에서 무작위 학생 ID 추출
         Integer studentId = studentIdQueue.poll()
@@ -154,19 +151,25 @@ class ZooKeeper800Test {
 
         String payload = String.format("{\"studentId\": %d, \"courseId\": %d}", studentId, courseId)
 
-        // API POST 요청
-        HTTPResponse response = request.POST(targetUrl, payload.getBytes(), headers)
+        try {
+            // API POST 요청
+            HTTPResponse response = request.POST(targetUrl, payload.getBytes(), headers)
 
-        int statusCode = response.statusCode
+            int statusCode = response.statusCode
 
-        // 검증 로직
-        if (statusCode == 200 || statusCode == 201) {
-            assertThat(statusCode, is(anyOf(equalTo(200), equalTo(201))))
-        } else if (statusCode == 400 || statusCode == 409) {
-            grinder.logger.info(">>> [비즈니스 예외] 정원 초과 [상태코드: ${statusCode}]")
-        } else {
-            grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]")
-            fail("동시성 제어 실패: HTTP ${statusCode}")
+            // 검증 로직
+            if (statusCode == 200 || statusCode == 201) {
+                assertThat(statusCode, is(anyOf(equalTo(200), equalTo(201))))
+            } else if (statusCode == 400 || statusCode == 409) {
+                grinder.logger.info(">>> [비즈니스 예외] 정원 초과 [상태코드: ${statusCode}]")
+            } else {
+                grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]")
+                grinder.statistics.forLastTest.success = false
+            }
+        } catch (Exception e) {
+            // 커넥션 타임아웃 등 네트워크 단절 시 예외 처리
+            grinder.logger.error(">>> [네트워크 장애] 요청 실패: ${e.message}")
+            grinder.statistics.forLastTest.success = false
         }
     }
 
@@ -180,8 +183,13 @@ class ZooKeeper800Test {
         }
 
         try {
-            // [동적 파일명 생성] 락 전략(STRATEGY), 인원수(TOTAL_USERS), 시작 시간(testStartTime) 조합
-            String fileName = String.format("/tmp/result/arrivals_%s_%d_%s.txt", STRATEGY, TOTAL_USERS, testStartTime)
+            String roundNum = "unknown"
+            File roundFile = new File("/tmp/result/round.txt")
+            if (roundFile.exists()) {
+                roundNum = roundFile.text.trim()
+            }
+
+            String fileName = String.format("/tmp/result/arrivals-%s-%d-%s.txt", STRATEGY, TOTAL_USERS, roundNum)
             File resultFile = new File(fileName)
             resultFile.parentFile.mkdirs()
             
@@ -189,7 +197,7 @@ class ZooKeeper800Test {
             resultFile.append("Process " + grinder.processNumber + ": " + actualList.toString() + "\n")
             
         } catch (Exception e) {
-            // 무시
+            grinder.logger.error("결과 파일 저장 실패: " + e.message)
         }
     }
 }
