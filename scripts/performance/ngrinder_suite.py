@@ -48,7 +48,7 @@ SCHEDULE = [
     # --- 본 테스트 전 웜업 ---
     (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 5, "pessimistic-lock", "warmup"),
     (IDS["SPIN WARM-UP"], "스핀 락 웜업", 5, "spin-lock", "warmup"),
-    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 5, "pubsub-lock", "warmup"),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 5, "pub-sub-lock", "warmup"),
     (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 5, "zookeeper-lock", "warmup"),
 
     # --- 비관적 락 ---
@@ -68,12 +68,12 @@ SCHEDULE = [
     (IDS["SPIN 1000"], "스핀 락 Vuser 1000 테스트", 7, "spin-lock", 1000),
 
     # --- 펍섭 락 ---
-    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
-    (IDS["PUB/SUB 500"], "펍섭 락 Vuser 500 테스트", 7, "pubsub-lock", 500),
-    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
-    (IDS["PUB/SUB 800"], "펍섭 락 Vuser 800 테스트", 7, "pubsub-lock", 800),
-    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
-    (IDS["PUB/SUB 1000"], "펍섭 락 Vuser 1000 테스트", 7, "pubsub-lock", 1000),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pub-sub-lock", "warmup"),
+    (IDS["PUB/SUB 500"], "펍섭 락 Vuser 500 테스트", 7, "pub-sub-lock", 500),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pub-sub-lock", "warmup"),
+    (IDS["PUB/SUB 800"], "펍섭 락 Vuser 800 테스트", 7, "pub-sub-lock", 800),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pub-sub-lock", "warmup"),
+    (IDS["PUB/SUB 1000"], "펍섭 락 Vuser 1000 테스트", 7, "pub-sub-lock", 1000),
 
     # --- 주키퍼 락 ---
     (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
@@ -143,15 +143,12 @@ def extract_output_csv(perf_id, target_dir, strategy, vuser, round_num):
     bucket_folder = f"{(perf_id // 1000) * 1000}_{((perf_id // 1000) * 1000) + 999}"
     container_source = f"/opt/ngrinder-controller/perftest/{bucket_folder}/{perf_id}/report/output.csv"
 
-    # 새로운 파일명: 예) pessimistic-500-1-result.csv
     new_filename = f"{strategy}-{vuser}-{round_num}-result.csv"
     temp_dest = os.path.join(target_dir, "temp_output.csv")
     final_dest = os.path.join(target_dir, new_filename)
 
     try:
-        # 1. 파일 복사
         subprocess.run(["docker", "cp", f"{CONTROLLER_CONTAINER_NAME}:{container_source}", temp_dest], check=True)
-        # 2. 이름 변경
         os.rename(temp_dest, final_dest)
         print(f"✅ CSV 저장 완료: {new_filename}")
     except Exception as e:
@@ -189,13 +186,13 @@ def wait_until_finished(perf_id):
 
 
 def extract_and_cleanup_results(target_dir):
-    print(f"\n=== [추출] 유입량(Arrivals) 데이터 수집 ===")
+    print(f"\n=== [최종 정리] 에이전트 데이터 수집 및 초기화 ===")
     try:
         subprocess.run(["docker", "cp", f"{AGENT_CONTAINER_NAME}:/tmp/result/.", target_dir], check=True)
         subprocess.run(["docker", "exec", AGENT_CONTAINER_NAME, "sh", "-c", "rm -rf /tmp/result/*"], check=True)
-        print(f"✅ 유입량 파일 추출 및 에이전트 초기화 완료")
+        print(f"✅ 컨테이너 내부 데이터 완벽 초기화 완료")
     except Exception as e:
-        print(f"❌ 데이터 추출 중 오류: {e}")
+        print(f"❌ 최종 데이터 정리 중 오류: {e}")
 
 
 # --- [메인 실행부] ---
@@ -233,12 +230,7 @@ if __name__ == "__main__":
         is_warmup = "웜업" in desc or str(vuser).lower() == "warmup"
 
         if is_warmup:
-            print(f"\n🧹 [웜업 종료] 불필요한 부산물(에이전트 로그)을 삭제합니다.")
-            # round.txt는 살려두고 arrivals 파일만 삭제
-            subprocess.run(["docker", "exec", AGENT_CONTAINER_NAME, "sh", "-c", "rm -f /tmp/result/arrivals*.txt"],
-                           check=False)
-            print("🚫 웜업 시나리오이므로 DB 체크 및 CSV 파일 추출을 건너뜁니다.")
-
+            print(f"\n💨 [웜업 종료] 예열 목적이므로 DB 체크 및 데이터 추출을 스킵합니다.")
         else:
             # 2. [본 테스트] DB 최종 상태 기록 및 CSV 추출
             db_log_file = os.path.join(consistency_dir, f"consistency-{strategy}-{vuser}-{round_num}.txt")
@@ -251,12 +243,20 @@ if __name__ == "__main__":
             if p_id:
                 extract_output_csv(p_id, raw_csv_dir, strategy, vuser, round_num)
 
+            try:
+                subprocess.run(["docker", "cp", f"{AGENT_CONTAINER_NAME}:/tmp/result/.", arrivals_dir], check=True)
+                subprocess.run(["docker", "exec", AGENT_CONTAINER_NAME, "sh", "-c", "rm -f /tmp/result/arrivals*.txt"],
+                               check=False)
+                print(f"✅ 유입량(Arrivals) 파일 개별 추출 완료")
+            except Exception as e:
+                print(f"❌ 유입량 파일 추출 실패: {e}")
+
         # 쿨다운 대기
         if wait_min > 0:
             print(f"\n다음 시나리오 전 {wait_min}분 대기...")
             time.sleep(wait_min * 60)
 
-    # 3. 유입량 결과 파일 추출
+    # 3. 모든 테스트 종료 후 최종 정리
     extract_and_cleanup_results(arrivals_dir)
 
     round_txt_path = os.path.join(arrivals_dir, "round.txt")
@@ -267,4 +267,4 @@ if __name__ == "__main__":
     total_duration = (time.time() - total_start) / 60
 
     print(f"\n🎉 모든 프로세스 완료. 총 소요 시간: {total_duration:.1f}분")
-    print(f"결과는 data/results 하위의 'arrivals'와 'consistency' 폴더에서 확인하세요.")
+    print(f"결과는 data 하위의 'raw'와 'results' 폴더에서 확인하세요.")
