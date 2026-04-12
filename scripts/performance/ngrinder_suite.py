@@ -250,10 +250,10 @@ if __name__ == "__main__":
 
             if p_id:
                 extract_output_csv(p_id, raw_csv_dir, strategy, vuser, round_num)
-                
+
         # 쿨다운 대기
         if wait_min > 0:
-            print(f"다음 시나리오 전 {wait_min}분 대기...")
+            print(f"\n다음 시나리오 전 {wait_min}분 대기...")
             time.sleep(wait_min * 60)
 
     # 3. 유입량 결과 파일 추출
