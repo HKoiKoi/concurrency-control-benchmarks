@@ -226,23 +226,31 @@ if __name__ == "__main__":
 
     # 2. 스케줄에 따른 개별 테스트 실행 및 정합성 체크
     for t_id, desc, wait_min, strategy, vuser in SCHEDULE:
-        # [동적 파일명 생성] consistency-락전략-Vuser-회차.txt
-        db_log_file = os.path.join(consistency_dir, f"consistency-{strategy}-{vuser}-{round_num}.txt")
-
         # 실제 테스트 실행 및 대기
         p_id = run_test(t_id, desc)
         wait_until_finished(p_id)
 
-        # [After Test] DB 최종 상태 기록
-        print(f"\n=== [Step 2] {desc} 종료 후 DB 체크 ===")
-        run_mysql_query("SELECT COUNT(*) FROM enrollment;", "신청 완료 데이터(enrollment) 최종 건수 조회", db_log_file)
-        run_mysql_query("SELECT enrolled_count FROM course WHERE course_id = 1;", "과목별 현재 수강 인원(counter) 최종 상태 조회",
-                        db_log_file)
+        is_warmup = "웜업" in desc or str(vuser).lower() == "warmup"
 
-        # 컨트롤러에서 CSV 추출
-        if p_id:
-            extract_output_csv(p_id, raw_csv_dir, strategy, vuser, round_num)
+        if is_warmup:
+            print(f"\n🧹 [웜업 종료] 불필요한 부산물(에이전트 로그)을 삭제합니다.")
+            # round.txt는 살려두고 arrivals 파일만 삭제
+            subprocess.run(["docker", "exec", AGENT_CONTAINER_NAME, "sh", "-c", "rm -f /tmp/result/arrivals*.txt"],
+                           check=False)
+            print("🚫 웜업 시나리오이므로 DB 체크 및 CSV 파일 추출을 건너뜁니다.")
 
+        else:
+            # 2. [본 테스트] DB 최종 상태 기록 및 CSV 추출
+            db_log_file = os.path.join(consistency_dir, f"consistency-{strategy}-{vuser}-{round_num}.txt")
+
+            print(f"\n=== [Step 2] {desc} 종료 후 DB 체크 ===")
+            run_mysql_query("SELECT COUNT(*) FROM enrollment;", "신청 완료 데이터 최종 건수 조회", db_log_file)
+            run_mysql_query("SELECT enrolled_count FROM course WHERE course_id = 1;", "과목별 현재 수강 인원 최종 상태 조회",
+                            db_log_file)
+
+            if p_id:
+                extract_output_csv(p_id, raw_csv_dir, strategy, vuser, round_num)
+                
         # 쿨다운 대기
         if wait_min > 0:
             print(f"다음 시나리오 전 {wait_min}분 대기...")
