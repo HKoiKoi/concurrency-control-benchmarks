@@ -1,0 +1,10 @@
+[21:36:45] 신청 완료 데이터 최종 건수 조회
+Query: SELECT COUNT(*) FROM enrollment;
+COUNT(*)
+200
+------------------------------------------------------------
+[21:36:45] 과목별 현재 수강 인원 최종 상태 조회
+Query: SELECT enrolled_count FROM course WHERE course_id = 1;
+enrolled_count
+200
+------------------------------------------------------------
