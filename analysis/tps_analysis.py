@@ -1,10 +1,10 @@
 import os
-from datetime import datetime
 
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
-def analyze_tps(df_all):
+def analyze_tps(df_all, max_round):
     """
     전처리된 전체 데이터(df_all)를 받아서 TPS(초당 처리량) 지표를 계산하고
     막대 그래프로 시각화해 주는 함수입니다.
@@ -32,8 +32,7 @@ def analyze_tps(df_all):
 
     os.makedirs('../data/results', exist_ok=True)
 
-    current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
-    file_name = f'../data/results/tps_results_{current_time}.csv'
+    file_name = f'../data/results/tps_results_{max_round}.csv'
 
     summary_stats.to_csv(file_name, index=False, encoding='utf-8-sig')
     print(f"TPS 결과 테이블이 '{file_name}'로 저장되었습니다.")
@@ -48,7 +47,7 @@ def analyze_tps(df_all):
     pivot_peak = summary_stats.pivot(index='Vuser', columns='Lock', values='Average_Peak_TPS')
 
     # 락 타입 순서 설정
-    lock_order = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock']
+    lock_order = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock', 'ZooKeeper Lock']
 
     # 데이터에 없는 락 이름이 존재할 수 있으므로, 존재하는 락 이름만 필터링
     valid_locks_mean = [lock for lock in lock_order if lock in pivot_mean.columns]
@@ -60,6 +59,11 @@ def analyze_tps(df_all):
 
     # 1. Overall Mean TPS 그래프
     pivot_mean.plot(kind='bar', ax=axes[0], alpha=0.85, width=0.7)
+
+    max_mean = pivot_mean.max().max()
+    if pd.notna(max_mean):
+        axes[0].set_ylim(0, max_mean * 1.4)
+
     axes[0].set_title('Overall Mean TPS', fontsize=14, pad=15)  # 그래프 제목
     axes[0].set_xlabel('Vuser', fontsize=12)  # x축 이름
     axes[0].set_ylabel('Mean TPS', fontsize=12)  # y축 이름
@@ -68,13 +72,15 @@ def analyze_tps(df_all):
 
     # 막대기(container) 위에 수치 삽입
     for container in axes[0].containers:
-        axes[0].bar_label(container, fmt='%.2f', padding=3, fontsize=10)  # 소수점 둘째자리까지 표기
-
-    # 글씨가 그래프 천장에 붙지 않도록 위쪽 여백(margins) 15% 넉넉하게 줌
-    axes[0].margins(y=0.15)
+        axes[0].bar_label(container, fmt='%.2f', padding=3, fontsize=10, rotation=90)  # 소수점 둘째자리까지 표기
 
     # 2. Average Peak TPS 그래프
     pivot_peak.plot(kind='bar', ax=axes[1], alpha=0.85, width=0.7)
+
+    max_peak = pivot_peak.max().max()
+    if pd.notna(max_peak):
+        axes[1].set_ylim(0, max_peak * 1.4)
+
     axes[1].set_title('Average Peak TPS', fontsize=14, pad=15)  # 그래프 제목
     axes[1].set_xlabel('Vuser', fontsize=12)  # x축 이름
     axes[1].set_ylabel('Peak TPS', fontsize=12)  # y축 이름
@@ -83,17 +89,14 @@ def analyze_tps(df_all):
 
     # 막대기(container) 위에 수치 삽입
     for container in axes[1].containers:
-        axes[1].bar_label(container, fmt='%.2f', padding=3, fontsize=10)  # 소수점 둘째자리까지 표기
-
-    # 글씨가 그래프 천장에 붙지 않도록 위쪽 여백(margins) 15% 넉넉하게 줌
-    axes[1].margins(y=0.15)
+        axes[1].bar_label(container, fmt='%.2f', padding=3, fontsize=9, rotation=90)  # 소수점 둘째자리까지 표기
 
     plt.tight_layout()
 
     os.makedirs('../data/figures', exist_ok=True)
-    img_name = f'../data/figures/tps_graph_{current_time}.png'
+    img_name = f'../data/figures/tps_graph_{max_round}.png'
 
     plt.savefig(img_name, dpi=300, bbox_inches='tight')
     print(f"TPS 그래프가 '{img_name}'로 저장되었습니다.")
-    
+
     plt.show()

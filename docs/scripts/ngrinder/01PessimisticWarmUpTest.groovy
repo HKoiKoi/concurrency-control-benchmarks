@@ -54,11 +54,9 @@ class PessimisticWarmUpTest {
 
         // [DB 데이터 클렌징] 프로세스 0에서만 초기화
         if (grinder.processNumber == 0) {
-
             grinder.logger.info(">>> [DB 초기화] 테스트 전략 세팅 중: ${STRATEGY}")
 
             try {
-
                 HTTPResponse resetResponse = request.POST(resetUrl, "".getBytes(), headers)
 
                 if (resetResponse.statusCode == 200) {
@@ -79,7 +77,7 @@ class PessimisticWarmUpTest {
 
         if (waitTime > 0) {
             grinder.logger.info(">>> [대기] 프로세스 ${grinder.processNumber} : 완벽한 동시 출발을 위해 ${waitTime}ms 대기 중...")
-            grinder.sleep(waitTime, 0)
+            Thread.sleep(waitTime)
         }
 
         test.record(request)
@@ -113,8 +111,7 @@ class PessimisticWarmUpTest {
         double timeInSec = -Math.log(1 - u * (1 - Math.exp(-lambdaShape * maxTime))) / lambdaShape
         long randomDelay = (long) (timeInSec * 1000)
 
-        // 계산된 시간만큼 대기 후 발사
-        grinder.sleep(randomDelay, 0)
+        grinder.sleep(randomDelay)
 
         // 큐에서 무작위 학생 ID 추출
         Integer studentId = studentIdQueue.poll()
@@ -128,19 +125,25 @@ class PessimisticWarmUpTest {
 
         String payload = String.format("{\"studentId\": %d, \"courseId\": %d}", studentId, courseId)
 
-        // API POST 요청
-        HTTPResponse response = request.POST(targetUrl, payload.getBytes(), headers)
+        try {
+            // API POST 요청
+            HTTPResponse response = request.POST(targetUrl, payload.getBytes(), headers)
 
-        int statusCode = response.statusCode
+            int statusCode = response.statusCode
 
-        // 검증 로직
-        if (statusCode == 200 || statusCode == 201) {
-            assertThat(statusCode, is(anyOf(equalTo(200), equalTo(201))))
-        } else if (statusCode == 400 || statusCode == 409) {
-            grinder.logger.info(">>> [비즈니스 예외] 정원 초과 [상태코드: ${statusCode}]")
-        } else {
-            grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]]")
-            fail("동시성 제어 실패: HTTP ${statusCode}")
+            // 검증 로직
+            if (statusCode == 200 || statusCode == 201) {
+                assertThat(statusCode, is(anyOf(equalTo(200), equalTo(201))))
+            } else if (statusCode == 400 || statusCode == 409) {
+                grinder.logger.info(">>> [비즈니스 예외] 정원 초과 [상태코드: ${statusCode}]")
+            } else {
+                grinder.logger.info(">>> [시스템 장애] 자원 고갈 [상태코드: ${statusCode}]")
+                grinder.statistics.forLastTest.success = false
+            }
+        } catch (Exception e) {
+            // 커넥션 타임아웃 등 네트워크 단절 시 예외 처리
+            grinder.logger.error(">>> [네트워크 장애] 요청 실패: ${e.message}")
+            grinder.statistics.forLastTest.success = false
         }
     }
 }

@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -55,7 +54,7 @@ def calculate_stability_metrics(group):
     })
 
 
-def analyze_stability(df_all):
+def analyze_stability(df_all, max_round):
     """
     전처리된 데이터를 받아
     안정성 지표를 계산하고, 에러바(Error Bar) 형태의 그래프로 보여주는 함수입니다.
@@ -81,8 +80,7 @@ def analyze_stability(df_all):
 
     os.makedirs('../data/results', exist_ok=True)
 
-    current_time = datetime.now().strftime('%Y%m%d_%H%M%S')
-    file_name = f'../data/results/stability_results_{current_time}.csv'
+    file_name = f'../data/results/stability_results_{max_round}.csv'
 
     stability_summary.to_csv(file_name, index=False, encoding='utf-8-sig')
     print(f"Stability 결과 테이블이 '{file_name}'로 저장되었습니다.")
@@ -91,7 +89,7 @@ def analyze_stability(df_all):
     plt.figure(figsize=(12, 7))
 
     # 락 타입 순서 설정
-    lock_order = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock']
+    lock_order = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock', 'ZooKeeper Lock']
 
     stability_summary['Lock'] = pd.Categorical(stability_summary['Lock'], categories=lock_order, ordered=True)
     stability_summary = stability_summary.sort_values(['Lock', 'Vuser'])
@@ -124,11 +122,13 @@ def analyze_stability(df_all):
     plt.xlabel('Vuser', fontsize=12)
     plt.ylabel('Latency (ms)', fontsize=12)
     plt.legend()  # 범례 표시
+    plt.ylim(-50, 2500)
+    plt.xticks(rotation=45, ha='right', fontsize=10)
     plt.grid(axis='y', linestyle='--', alpha=0.5)  # 가로 점섬 그리드
     plt.tight_layout()  # 여백 자동 조절
 
     os.makedirs('../data/figures', exist_ok=True)
-    img_name = f'../data/figures/stability_graph_{current_time}.png'
+    img_name = f'../data/figures/stability_graph_{max_round}.png'
 
     plt.savefig(img_name, dpi=300, bbox_inches='tight')
     print(f"Stability 그래프가 '{img_name}'로 저장되었습니다.")
