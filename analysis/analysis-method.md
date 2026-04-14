@@ -115,3 +115,25 @@
 ### $2\sigma$ 신뢰 구간
 
 $$[\mu_{total} - 2\sigma_{total}, \mu_{total} + 2\sigma_{total}]$$
+
+## 적응형 프레임워크에 적용할 지표
+
+### $\lambda$
+
+- Arrival Rate, 유입률
+- 시스템에 실제로 유입되어 처리된 요청 수
+- 실험에서는 **Overall Mean TPS**
+
+### $\mu$
+
+- Service Rate, 서비스 처리율
+- 시스템이 아무런 방해(지연) 없이 최대한으로 처리할 수 있는 본래의 체력
+- 실험에서는 **Average Peak TPS** 중 가장 높은 수치를 임계치로 봄
+
+### $\rho$
+
+- Utilization, 이용률
+- 시스템이 전체 체력($\mu$) 대비 현재 얼마나 부하($\lambda$)를 받고 있는지를 나타내는 비율
+- $\rho = \frac{\lambda}{\mu}$
+
+---
