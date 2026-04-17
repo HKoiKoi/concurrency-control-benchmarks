@@ -1,0 +1,13 @@
+﻿Lock,Vuser,Worst_Mean_Latency,Overall_Mean_Latency,Best_Mean_Latency,Average_p95_Latency
+Pessimistic Lock,500,673.77,312.19,139.34,868.21
+Pessimistic Lock,800,856.13,565.91,286.06,1385.39
+Pessimistic Lock,1000,1065.27,668.16,323.46,1586.33
+Pub/Sub Lock,500,645.38,287.28,69.41,811.21
+Pub/Sub Lock,800,935.89,587.33,266.06,1463.28
+Pub/Sub Lock,1000,942.57,685.22,444.21,1645.56
+Spin Lock,500,533.57,326.83,149.11,913.11
+Spin Lock,800,885.15,519.35,223.15,1336.36
+Spin Lock,1000,1171.84,705.32,302.25,1685.93
+ZooKeeper Lock,500,629.45,298.26,87.17,839.74
+ZooKeeper Lock,800,898.01,530.37,192.78,1349.33
+ZooKeeper Lock,1000,988.83,697.01,423.26,1648.77
