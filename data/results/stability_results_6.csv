@@ -1,0 +1,13 @@
+﻿Lock,Vuser,Overall_Mean_Latency,Avg_Total_Sigma,Avg_Lower_Bound,Avg_Upper_Bound
+Pessimistic Lock,500,325.31,324.04,0.0,973.39
+Pessimistic Lock,800,568.68,472.7,0.0,1514.09
+Pessimistic Lock,1000,677.66,494.47,0.0,1666.59
+Pub/Sub Lock,500,301.06,318.73,0.0,938.51
+Pub/Sub Lock,800,536.48,457.53,0.0,1451.55
+Pub/Sub Lock,1000,770.25,516.23,0.0,1802.71
+Spin Lock,500,447.76,404.3,0.0,1256.37
+Spin Lock,800,558.04,470.22,0.0,1498.48
+Spin Lock,1000,655.3,544.42,0.0,1744.15
+ZooKeeper Lock,500,290.8,299.09,0.0,888.97
+ZooKeeper Lock,800,430.96,426.26,0.0,1283.48
+ZooKeeper Lock,1000,627.99,503.62,0.0,1635.24

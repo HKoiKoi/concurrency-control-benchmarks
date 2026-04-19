@@ -3,6 +3,8 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
+BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+
 
 def analyze_tps(df_all, max_round):
     """
@@ -30,9 +32,9 @@ def analyze_tps(df_all, max_round):
     print("\n=== 각 락(Lock) 및 Vuser별 TPS 분석 결과===")
     print(summary_stats.to_string(index=False))
 
-    os.makedirs('../data/results', exist_ok=True)
+    os.makedirs(os.path.join(BASE_DIR, 'data', 'results'), exist_ok=True)
 
-    file_name = f'../data/results/tps_results_{max_round}.csv'
+    file_name = os.path.join(BASE_DIR, 'data', 'results', f'tps_results_{max_round}.csv')
 
     summary_stats.to_csv(file_name, index=False, encoding='utf-8-sig')
     print(f"TPS 결과 테이블이 '{file_name}'로 저장되었습니다.")
@@ -93,10 +95,10 @@ def analyze_tps(df_all, max_round):
 
     plt.tight_layout()
 
-    os.makedirs('../data/figures', exist_ok=True)
-    img_name = f'../data/figures/tps_graph_{max_round}.png'
+    os.makedirs(os.path.join(BASE_DIR, 'data', 'figures'), exist_ok=True)
+    img_name = os.path.join(BASE_DIR, 'data', 'figures', f'tps_graph_{max_round}.png')
 
     plt.savefig(img_name, dpi=300, bbox_inches='tight')
     print(f"TPS 그래프가 '{img_name}'로 저장되었습니다.")
 
-    plt.show()
+    plt.close()

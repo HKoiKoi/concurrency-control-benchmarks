@@ -10,8 +10,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- [설정 영역] ---
-NGRINDER_URL = "http://localhost:8081"
-AUTH = ('admin', 'admin')
+NGRINDER_CONTROLLER_PORT = os.getenv("NGRINDER_CONTROLLER_PORT", "80")
+NGRINDER_URL = f"http://localhost:{NGRINDER_CONTROLLER_PORT}"
+NGRINDER_USER = os.getenv("NGRINDER_USER", "admin")
+NGRINDER_PASSWORD = os.getenv("NGRINDER_PASSWORD", "admin")
+AUTH = (NGRINDER_USER, NGRINDER_PASSWORD)
 AGENT_CONTAINER_NAME = "ngrinder-agent"
 CONTROLLER_CONTAINER_NAME = "ngrinder-controller"
 
@@ -45,29 +48,43 @@ IDS = {
 
 # 테스트 스케줄 정의 (ID, 설명, 대기시간(분), 락전략(파일명용), Vuser(파일명용))
 SCHEDULE = [
+    # --- 본 테스트 전 웜업 ---
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 5, "pessimistic-lock", "warmup"),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 5, "spin-lock", "warmup"),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 5, "pub-sub-lock", "warmup"),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 5, "zookeeper-lock", "warmup"),
+
     # --- 비관적 락 ---
-    # (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
-    (IDS["PESSIMISTIC 500"], "비관적 락 Vuser 500 테스트", 1, "pessimistic-lock", 500),
-    # (IDS["PESSIMISTIC 800"], "비관적 락 Vuser 800 테스트", 7, "pessimistic-lock", 800),
-    # (IDS["PESSIMISTIC 1000"], "비관적 락 Vuser 1000 테스트", 7, "pessimistic-lock", 1000),
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
+    (IDS["PESSIMISTIC 500"], "비관적 락 Vuser 500 테스트", 7, "pessimistic-lock", 500),
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
+    (IDS["PESSIMISTIC 800"], "비관적 락 Vuser 800 테스트", 7, "pessimistic-lock", 800),
+    (IDS["PESSIMISTIC WARM-UP"], "비관적 락 웜업", 3, "pessimistic-lock", "warmup"),
+    (IDS["PESSIMISTIC 1000"], "비관적 락 Vuser 1000 테스트", 7, "pessimistic-lock", 1000),
 
     # --- 스핀 락 ---
-    # (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
-    # (IDS["SPIN 500"], "스핀 락 Vuser 500 테스트", 7, "spin-lock", 500),
-    # (IDS["SPIN 800"], "스핀 락 Vuser 800 테스트", 7, "spin-lock", 800),
-    # (IDS["SPIN 1000"], "스핀 락 Vuser 1000 테스트", 7, "spin-lock", 1000),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
+    (IDS["SPIN 500"], "스핀 락 Vuser 500 테스트", 7, "spin-lock", 500),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
+    (IDS["SPIN 800"], "스핀 락 Vuser 800 테스트", 7, "spin-lock", 800),
+    (IDS["SPIN WARM-UP"], "스핀 락 웜업", 3, "spin-lock", "warmup"),
+    (IDS["SPIN 1000"], "스핀 락 Vuser 1000 테스트", 7, "spin-lock", 1000),
 
     # --- 펍섭 락 ---
-    # (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pubsub-lock", "warmup"),
-    # (IDS["PUB/SUB 500"], "펍섭 락 Vuser 500 테스트", 7, "pubsub-lock", 500),
-    # (IDS["PUB/SUB 800"], "펍섭 락 Vuser 800 테스트", 7, "pubsub-lock", 800),
-    # (IDS["PUB/SUB 1000"], "펍섭 락 Vuser 1000 테스트", 7, "pubsub-lock", 1000),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pub-sub-lock", "warmup"),
+    (IDS["PUB/SUB 500"], "펍섭 락 Vuser 500 테스트", 7, "pub-sub-lock", 500),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pub-sub-lock", "warmup"),
+    (IDS["PUB/SUB 800"], "펍섭 락 Vuser 800 테스트", 7, "pub-sub-lock", 800),
+    (IDS["PUB/SUB WARM-UP"], "펍섭 락 웜업", 3, "pub-sub-lock", "warmup"),
+    (IDS["PUB/SUB 1000"], "펍섭 락 Vuser 1000 테스트", 7, "pub-sub-lock", 1000),
 
     # --- 주키퍼 락 ---
-    # (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
-    # (IDS["ZOOKEEPER 500"], "주키퍼 락 Vuser 500 테스트", 7, "zookeeper-lock", 500),
-    # (IDS["ZOOKEEPER 800"], "주키퍼 락 Vuser 800 테스트", 7, "zookeeper-lock", 800),
-    # (IDS["ZOOKEEPER 1000"], "주키퍼 락 Vuser 1000 테스트", 7, "zookeeper-lock", 1000),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
+    (IDS["ZOOKEEPER 500"], "주키퍼 락 Vuser 500 테스트", 7, "zookeeper-lock", 500),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
+    (IDS["ZOOKEEPER 800"], "주키퍼 락 Vuser 800 테스트", 7, "zookeeper-lock", 800),
+    (IDS["ZOOKEEPER WARM-UP"], "주키퍼 락 웜업", 3, "zookeeper-lock", "warmup"),
+    (IDS["ZOOKEEPER 1000"], "주키퍼 락 Vuser 1000 테스트(마지막 테스트)", 1, "zookeeper-lock", 1000),
 ]
 
 
@@ -129,19 +146,18 @@ def extract_output_csv(perf_id, target_dir, strategy, vuser, round_num):
     bucket_folder = f"{(perf_id // 1000) * 1000}_{((perf_id // 1000) * 1000) + 999}"
     container_source = f"/opt/ngrinder-controller/perftest/{bucket_folder}/{perf_id}/report/output.csv"
 
-    # 새로운 파일명: 예) pessimistic-500-1-result.csv
     new_filename = f"{strategy}-{vuser}-{round_num}-result.csv"
     temp_dest = os.path.join(target_dir, "temp_output.csv")
     final_dest = os.path.join(target_dir, new_filename)
 
     try:
-        # 1. 파일 복사
         subprocess.run(["docker", "cp", f"{CONTROLLER_CONTAINER_NAME}:{container_source}", temp_dest], check=True)
-        # 2. 이름 변경
         os.rename(temp_dest, final_dest)
         print(f"✅ CSV 저장 완료: {new_filename}")
     except Exception as e:
         print(f"❌ CSV 추출 실패: {e}")
+        if os.path.exists(temp_dest):
+            os.remove(temp_dest)
 
 
 def run_test(test_id, description):
@@ -169,19 +185,19 @@ def wait_until_finished(perf_id):
             if status in ["FINISHED", "STOPPED", "ERROR", "CANCELED"]:
                 print(f"\n테스트 종료 상태: {status}")
                 break
-        except:
+        except Exception:
             pass
         time.sleep(10)
 
 
 def extract_and_cleanup_results(target_dir):
-    print(f"\n=== [추출] 유입량(Arrivals) 데이터 수집 ===")
+    print(f"\n=== [최종 정리] 에이전트 데이터 수집 및 초기화 ===")
     try:
         subprocess.run(["docker", "cp", f"{AGENT_CONTAINER_NAME}:/tmp/result/.", target_dir], check=True)
         subprocess.run(["docker", "exec", AGENT_CONTAINER_NAME, "sh", "-c", "rm -rf /tmp/result/*"], check=True)
-        print(f"✅ 유입량 파일 추출 및 에이전트 초기화 완료")
+        print(f"✅ 컨테이너 내부 데이터 완벽 초기화 완료")
     except Exception as e:
-        print(f"❌ 데이터 추출 중 오류: {e}")
+        print(f"❌ 최종 데이터 정리 중 오류: {e}")
 
 
 # --- [메인 실행부] ---
@@ -194,7 +210,7 @@ if __name__ == "__main__":
         try:
             round_num = int(input("진행할 테스트 회차를 숫자로 입력하세요: ").strip())
             break
-        except:
+        except ValueError:
             print("숫자만 입력하세요.")
 
     folder_name = f"{get_ordinal(round_num)}-test"
@@ -212,29 +228,40 @@ if __name__ == "__main__":
 
     # 2. 스케줄에 따른 개별 테스트 실행 및 정합성 체크
     for t_id, desc, wait_min, strategy, vuser in SCHEDULE:
-        # [동적 파일명 생성] consistency-락전략-Vuser-회차.txt
-        db_log_file = os.path.join(consistency_dir, f"consistency-{strategy}-{vuser}-{round_num}.txt")
-
         # 실제 테스트 실행 및 대기
         p_id = run_test(t_id, desc)
         wait_until_finished(p_id)
 
-        # [After Test] DB 최종 상태 기록
-        print(f"\n=== [Step 2] {desc} 종료 후 DB 체크 ===")
-        run_mysql_query("SELECT COUNT(*) FROM enrollment;", "신청 완료 데이터(enrollment) 최종 건수 조회", db_log_file)
-        run_mysql_query("SELECT enrolled_count FROM course WHERE course_id = 1;", "과목별 현재 수강 인원(counter) 최종 상태 조회",
-                        db_log_file)
+        is_warmup = "웜업" in desc or str(vuser).lower() == "warmup"
 
-        # 컨트롤러에서 CSV 추출
-        if p_id:
-            extract_output_csv(p_id, raw_csv_dir, strategy, vuser, round_num)
+        if is_warmup:
+            print(f"\n💨 [웜업 종료] 예열 목적이므로 DB 체크 및 데이터 추출을 스킵합니다.")
+        else:
+            # 2. [본 테스트] DB 최종 상태 기록 및 CSV 추출
+            db_log_file = os.path.join(consistency_dir, f"consistency-{strategy}-{vuser}-{round_num}.txt")
+
+            print(f"\n=== [Step 2] {desc} 종료 후 DB 체크 ===")
+            run_mysql_query("SELECT COUNT(*) FROM enrollment;", "신청 완료 데이터 최종 건수 조회", db_log_file)
+            run_mysql_query("SELECT enrolled_count FROM course WHERE course_id = 1;", "과목별 현재 수강 인원 최종 상태 조회",
+                            db_log_file)
+
+            if p_id:
+                extract_output_csv(p_id, raw_csv_dir, strategy, vuser, round_num)
+
+            try:
+                subprocess.run(["docker", "cp", f"{AGENT_CONTAINER_NAME}:/tmp/result/.", arrivals_dir], check=True)
+                subprocess.run(["docker", "exec", AGENT_CONTAINER_NAME, "sh", "-c", "rm -f /tmp/result/arrivals*.txt"],
+                               check=False)
+                print(f"✅ 유입량(Arrivals) 파일 개별 추출 완료")
+            except Exception as e:
+                print(f"❌ 유입량 파일 추출 실패: {e}")
 
         # 쿨다운 대기
         if wait_min > 0:
-            print(f"다음 시나리오 전 {wait_min}분 대기...")
+            print(f"\n다음 시나리오 전 {wait_min}분 대기...")
             time.sleep(wait_min * 60)
 
-    # 3. 유입량 결과 파일 추출
+    # 3. 모든 테스트 종료 후 최종 정리
     extract_and_cleanup_results(arrivals_dir)
 
     round_txt_path = os.path.join(arrivals_dir, "round.txt")
@@ -245,4 +272,4 @@ if __name__ == "__main__":
     total_duration = (time.time() - total_start) / 60
 
     print(f"\n🎉 모든 프로세스 완료. 총 소요 시간: {total_duration:.1f}분")
-    print(f"결과는 data/results 하위의 'arrivals'와 'consistency' 폴더에서 확인하세요.")
+    print(f"결과는 data 하위의 'raw'와 'results' 폴더에서 확인하세요.")
