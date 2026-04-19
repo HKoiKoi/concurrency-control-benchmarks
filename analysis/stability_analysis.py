@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
+
 
 def calculate_stability_metrics(group):
     """
@@ -78,9 +80,9 @@ def analyze_stability(df_all, max_round):
     print("\n=== 각 락(Lock) 및 Vuser별 2-sigma 신뢰 구간 분석 결과(ms) ===")
     print(stability_summary.to_string(index=False))
 
-    os.makedirs('../data/results', exist_ok=True)
+    os.makedirs(os.path.join(BASE_DIR, 'data', 'results'), exist_ok=True)
 
-    file_name = f'../data/results/stability_results_{max_round}.csv'
+    file_name = os.path.join(BASE_DIR, 'data', 'results', f'stability_results_{max_round}.csv')
 
     stability_summary.to_csv(file_name, index=False, encoding='utf-8-sig')
     print(f"Stability 결과 테이블이 '{file_name}'로 저장되었습니다.")
@@ -127,10 +129,10 @@ def analyze_stability(df_all, max_round):
     plt.grid(axis='y', linestyle='--', alpha=0.5)  # 가로 점섬 그리드
     plt.tight_layout()  # 여백 자동 조절
 
-    os.makedirs('../data/figures', exist_ok=True)
-    img_name = f'../data/figures/stability_graph_{max_round}.png'
+    os.makedirs(os.path.join(BASE_DIR, 'data', 'figures'), exist_ok=True)
+    img_name = os.path.join(BASE_DIR, 'data', 'figures', f'stability_graph_{max_round}.png')
 
     plt.savefig(img_name, dpi=300, bbox_inches='tight')
     print(f"Stability 그래프가 '{img_name}'로 저장되었습니다.")
 
-    plt.show()
+    plt.close()

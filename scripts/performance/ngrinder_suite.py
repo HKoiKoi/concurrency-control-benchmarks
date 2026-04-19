@@ -10,8 +10,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # --- [설정 영역] ---
-NGRINDER_URL = "http://localhost:8081"
-AUTH = ('admin', 'admin')
+NGRINDER_CONTROLLER_PORT = os.getenv("NGRINDER_CONTROLLER_PORT", "80")
+NGRINDER_URL = f"http://localhost:{NGRINDER_CONTROLLER_PORT}"
+NGRINDER_USER = os.getenv("NGRINDER_USER", "admin")
+NGRINDER_PASSWORD = os.getenv("NGRINDER_PASSWORD", "admin")
+AUTH = (NGRINDER_USER, NGRINDER_PASSWORD)
 AGENT_CONTAINER_NAME = "ngrinder-agent"
 CONTROLLER_CONTAINER_NAME = "ngrinder-controller"
 
@@ -153,6 +156,8 @@ def extract_output_csv(perf_id, target_dir, strategy, vuser, round_num):
         print(f"✅ CSV 저장 완료: {new_filename}")
     except Exception as e:
         print(f"❌ CSV 추출 실패: {e}")
+        if os.path.exists(temp_dest):
+            os.remove(temp_dest)
 
 
 def run_test(test_id, description):
@@ -180,7 +185,7 @@ def wait_until_finished(perf_id):
             if status in ["FINISHED", "STOPPED", "ERROR", "CANCELED"]:
                 print(f"\n테스트 종료 상태: {status}")
                 break
-        except:
+        except Exception:
             pass
         time.sleep(10)
 
@@ -205,7 +210,7 @@ if __name__ == "__main__":
         try:
             round_num = int(input("진행할 테스트 회차를 숫자로 입력하세요: ").strip())
             break
-        except:
+        except ValueError:
             print("숫자만 입력하세요.")
 
     folder_name = f"{get_ordinal(round_num)}-test"
