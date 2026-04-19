@@ -1,3 +1,4 @@
+import os
 import platform
 
 import matplotlib.pyplot as plt
@@ -19,8 +20,9 @@ plt.rcParams['axes.unicode_minus'] = False
 
 if __name__ == "__main__":
 
-    # 데이터 폴더 경로 지정
-    data_dir = '../data/raw/ngrinder'
+    # 현재 스크립트 파일 기준으로 data 경로 설정 (실행 위치에 무관하게 동작)
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    data_dir = os.path.join(BASE_DIR, '..', 'data', 'raw', 'ngrinder')
     print(f"[{data_dir}] 경로에서 데이터를 읽어옵니다...")
 
     # 전처리 함수 실행
