@@ -12,7 +12,11 @@ public final class LockConstants {
 	 */
 	public static final double SYSTEM_CAPACITY_MU = 223.89;
 
-	// 큐잉 이론 임계치
-	public static final double RHO_THRESHOLD_LOW = 0.24;
-	public static final double RHO_THRESHOLD_HIGH = 0.34;
+	// Th1: Pessimistic <-> Zookeeper 전환 기준 (중심값: 0.24)
+	public static final double RHO_TH1_UP = 0.24;
+	public static final double RHO_TH1_DOWN = 0.22;
+
+	// Th2: Zookeeper <-> Redisson 전환 기준 (중심값: 0.34)
+	public static final double RHO_TH2_UP = 0.34;
+	public static final double RHO_TH2_DOWN = 0.32;
 }
