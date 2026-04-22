@@ -11,6 +11,7 @@ import com.stu.benchmark.domain.enrollment.facade.PubSubLockFacade;
 import com.stu.benchmark.domain.enrollment.facade.SpinLockFacade;
 import com.stu.benchmark.domain.enrollment.facade.ZookeeperLockFacade;
 import com.stu.benchmark.domain.enrollment.service.EnrollmentService;
+import com.stu.benchmark.domain.enrollment.service.EnrollmentServiceV2;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class EnrollmentController {
 	private final ZookeeperLockFacade zookeeperLockFacade;
 
 	private final EnrollmentService enrollmentService;
+	private final EnrollmentServiceV2 enrollmentServiceV2;
 
 	/**
 	 * Baseline: No Lock API
@@ -79,5 +81,17 @@ public class EnrollmentController {
 	) {
 		zookeeperLockFacade.enrollWithZookeeperLock(request);
 		return ResponseEntity.ok("[Case 4: Zookeeper Lock] 수강신청이 성공적으로 완료되었습니다.");
+	}
+
+	/**
+	 * Case 5: Adaptive Lock API (V2)
+	 * 실시간 부하에 따라 최적의 락(Pessimistic Lock, Zookeeper Lock, Pub/Sub Lock)을 동적으로 선택하는 수강신청
+	 */
+	@PostMapping("/adaptive-lock")
+	public ResponseEntity<String> enrollWithAdaptiveLock(
+		@Valid @RequestBody EnrollmentCreateRequest request
+	) {
+		enrollmentServiceV2.enroll(request);
+		return ResponseEntity.ok("[Case 5: Adaptive Lock V2] 수강신청이 성공적으로 완료되었습니다.");
 	}
 }
