@@ -12,6 +12,7 @@ import com.stu.benchmark.global.lock.AdaptiveLockManager;
 import com.stu.benchmark.global.lock.DistributedLock;
 import com.stu.benchmark.global.lock.LockContextHolder;
 import com.stu.benchmark.global.lock.LockType;
+import com.stu.benchmark.global.metric.TpsMetricService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AdaptiveLockAspect {
 
+	private final TpsMetricService tpsMetricService;
 	private final AdaptiveLockManager adaptiveLockManager;
-
-	// TODO: TPS 메트릭 수집하는 서비스 작성 필요
 
 	@Around("@annotation(adaptiveLock)")
 	public Object applyAdaptiveLock(ProceedingJoinPoint joinPoint, AdaptiveLock adaptiveLock) throws Throwable {
+
+		tpsMetricService.recordRequest();
 
 		MethodSignature signature = (MethodSignature)joinPoint.getSignature();
 
@@ -38,8 +40,7 @@ public class AdaptiveLockAspect {
 			adaptiveLock.key()
 		);
 
-		// TODO: 현재 실시간 TPS 조회 로직 추가해야함.
-		double currentTps = 40.0;    // 임시로 40 고정
+		double currentTps = tpsMetricService.getCurrentTps();
 
 		DistributedLock strategy = adaptiveLockManager.determineLockStrategy(currentTps);
 		LockType lockType = strategy.getLockType();
@@ -47,6 +48,9 @@ public class AdaptiveLockAspect {
 		LockContextHolder.set(lockType);
 
 		try {
+
+			log.debug("현재 TPS: {}, 선택된 락 전략: {}", currentTps, lockType);
+
 			// 비관적 락은 별도 처리
 			if (lockType == LockType.PESSIMISTIC) {
 				log.debug("비관적 락 전략 실행. DB 쿼리 레벨에서 제어됩니다.");
