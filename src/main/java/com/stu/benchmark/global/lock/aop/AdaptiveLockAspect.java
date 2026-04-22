@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.stu.benchmark.global.exception.LockAcquisitionException;
 import com.stu.benchmark.global.lock.AdaptiveLockManager;
 import com.stu.benchmark.global.lock.DistributedLock;
+import com.stu.benchmark.global.lock.LockContextHolder;
 import com.stu.benchmark.global.lock.LockType;
 
 import lombok.RequiredArgsConstructor;
@@ -42,19 +43,18 @@ public class AdaptiveLockAspect {
 
 		DistributedLock strategy = adaptiveLockManager.determineLockStrategy(currentTps);
 		LockType lockType = strategy.getLockType();
-		String lockKey = lockType.generateKey(dynamicKey);
 
-		// 비관적 락은 별도 처리
-		if (lockType == LockType.PESSIMISTIC) {
-			log.debug("비관적 락 전략 실행. DB 쿼리 레벨에서 제어됩니다.");
-			return joinPoint.proceed();
-		}
-
-		// Zookeeper, Redisson 미들웨어 락 처리
-		boolean acquired = false;
+		LockContextHolder.set(lockType);
 
 		try {
-			acquired = strategy.tryLock(
+			// 비관적 락은 별도 처리
+			if (lockType == LockType.PESSIMISTIC) {
+				log.debug("비관적 락 전략 실행. DB 쿼리 레벨에서 제어됩니다.");
+				return joinPoint.proceed();
+			}
+
+			String lockKey = lockType.generateKey(dynamicKey);
+			boolean acquired = strategy.tryLock(
 				lockKey,
 				adaptiveLock.waitTime(),
 				adaptiveLock.leaseTime(),
@@ -66,16 +66,13 @@ public class AdaptiveLockAspect {
 				throw new LockAcquisitionException("락 획득 대기 시간 초과");
 			}
 
-			return joinPoint.proceed();
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-			throw new LockAcquisitionException(lockType + " 대기 중 스레드 인터럽트 발생", e);
-		} catch (Exception e) {
-			throw new LockAcquisitionException(lockType + " 획득 중 오류 발생", e);
-		} finally {
-			if (acquired) {
+			try {
+				return joinPoint.proceed();
+			} finally {
 				strategy.unlock(lockKey);
 			}
+		} finally {
+			LockContextHolder.clear();
 		}
 	}
 }
