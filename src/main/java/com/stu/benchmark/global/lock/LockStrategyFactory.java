@@ -20,12 +20,12 @@ public class LockStrategyFactory {
 			));
 	}
 
-	public DistributedLock getStrategy(LockType lockType) throws IllegalAccessException {
+	public DistributedLock getStrategy(LockType lockType) {
 
 		DistributedLock strategy = strategies.get(lockType);
 
 		if (strategy == null) {
-			throw new IllegalAccessException("지원하지 않는 락 타입입니다: " + lockType);
+			throw new IllegalArgumentException("지원하지 않는 락 타입입니다: " + lockType);
 		}
 
 		return strategy;
