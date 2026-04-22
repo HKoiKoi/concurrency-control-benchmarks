@@ -23,6 +23,8 @@ public class ZookeeperLockStrategy implements DistributedLock {
 	@Override
 	public boolean tryLock(String key, long waitTime, long leaseTime, TimeUnit unit) throws Exception {
 
+		// InterProcessMutex는 자체적인 TTL(leaseTime)을 지원하지 않습니다.
+		// 프로세스 비정상 종료 시 Zookeeper 세션 만료(session timeout)로 락이 자동 해제됩니다.
 		InterProcessMutex mutex = new InterProcessMutex(curatorFramework, key);
 
 		try {

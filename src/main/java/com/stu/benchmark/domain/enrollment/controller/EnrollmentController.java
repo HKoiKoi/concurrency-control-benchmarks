@@ -85,7 +85,7 @@ public class EnrollmentController {
 
 	/**
 	 * Case 5: Adaptive Lock API (V2)
-	 * 실시간 부하에 따라 최적의 락(Pessimistic Lock, Zookeeper Lock, Pub/Sub Lock)을 동적으로 선택하는 수강신청
+	 * 실시간 부하에 따라 최적의 락(Pessimistic Lock, Zookeeper Lock, Redisson Lock)을 동적으로 선택하는 수강신청
 	 */
 	@PostMapping("/adaptive-lock")
 	public ResponseEntity<String> enrollWithAdaptiveLock(
