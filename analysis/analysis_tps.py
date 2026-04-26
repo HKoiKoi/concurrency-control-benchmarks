@@ -50,6 +50,10 @@ def analyze_tps(input_filepath, output_filepath):
         'Average_Peak_TPS': 'Average Peak TPS'
     })
 
+    target_columns = ['Worst Mean TPS', 'Overall Mean TPS', 'Best Mean TPS', 'Average Peak TPS']
+    for col in target_columns:
+        tps_summary[col] = tps_summary[col].apply(lambda x: f"{x:.2f}")
+
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
     tps_summary.to_csv(output_filepath, index=False)
 
