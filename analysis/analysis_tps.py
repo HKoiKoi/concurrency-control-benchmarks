@@ -14,7 +14,10 @@ def analyze_tps(input_filepath, output_filepath):
     print(f"데이터를 불러옵니다: {input_filepath}")
     df = pd.read_csv(input_filepath)
 
-    lock_col = 'Lock' if 'Lock' in df.columns else 'Lock'
+    lock_col = 'Lock'
+    if lock_col not in df.columns:
+        print(f"[오류] '{lock_col}' 컬럼이 데이터에 없습니다. 현재 컬럼: {list(df.columns)}")
+        return
 
     test_runs = df.groupby([lock_col, 'Vuser', 'Order']).agg(
         Mean_TPS=('TPS', 'mean'),

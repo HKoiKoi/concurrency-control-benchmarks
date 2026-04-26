@@ -30,7 +30,11 @@ def save_adaptive_vs_best_stability_chart(df, target_column, title, output_filep
 
         # 2. Adaptive Lock 데이터 가져오기
         v_adapt = df[(df['Vuser'] == v) & (df['Lock'] == 'Adaptive Lock')]
-        adapt_vals.append(v_adapt[target_column].values[0] if not v_adapt.empty else 0)
+        if v_adapt.empty:
+            print(f"[경고] Vuser {v}에 대한 Adaptive Lock 데이터가 없습니다. 0으로 대체합니다.")
+            adapt_vals.append(0)
+        else:
+            adapt_vals.append(v_adapt[target_column].values[0])
 
     # 그래프 그리기 준비
     fig, ax = plt.subplots(figsize=(10, 7))
@@ -79,7 +83,9 @@ def save_adaptive_vs_best_stability_chart(df, target_column, title, output_filep
     autolabel(rects2, adapt_vals)
 
     # Y축 상단 여유 확보 (텍스트 겹침 방지)
-    plt.ylim(0, max(max(best_vals), max(adapt_vals)) * 1.25)
+    all_vals = [v for v in best_vals + adapt_vals if v > 0]
+    y_max = max(all_vals) if all_vals else 1
+    plt.ylim(0, y_max * 1.25)
     plt.tight_layout()
 
     # 저장
