@@ -64,6 +64,6 @@ def analyze_tps(input_filepath, output_filepath):
 
 if __name__ == "__main__":
     INPUT_FILEPATH = '../data/processed/ngrinder.csv'
-    OUTPUT_FILEPATH = '../data/csv/tps_ngrinder.csv'
+    OUTPUT_FILEPATH = '../data/results/tps_ngrinder.csv'
 
     analyze_tps(INPUT_FILEPATH, OUTPUT_FILEPATH)

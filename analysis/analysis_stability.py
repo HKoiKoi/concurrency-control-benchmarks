@@ -110,6 +110,6 @@ def analyze_stability(input_filepath, output_filepath):
 if __name__ == "__main__":
     # 데이터 경로 설정
     INPUT_FILEPATH = "../data/processed/ngrinder.csv"
-    OUTPUT_FILEPATH = "../data/csv/stability_ngrinder.csv"
+    OUTPUT_FILEPATH = "../data/results/stability_ngrinder.csv"
 
     analyze_stability(INPUT_FILEPATH, OUTPUT_FILEPATH)

@@ -114,6 +114,6 @@ def analyze_latency(input_filepath, output_filepath):
 
 if __name__ == "__main__":
     INPUT_FILEPATH = "../data/processed/ngrinder.csv"
-    OUTPUT_FILEPATH = "../data/csv/latency_ngrinder.csv"
+    OUTPUT_FILEPATH = "../data/results/latency_ngrinder.csv"
 
     analyze_latency(INPUT_FILEPATH, OUTPUT_FILEPATH)
