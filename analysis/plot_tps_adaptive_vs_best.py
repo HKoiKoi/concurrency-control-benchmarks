@@ -104,7 +104,7 @@ def main():
     save_adaptive_vs_best_chart(
         df,
         target_column='Overall Mean TPS',
-        title='Adaptive Lock vs Best Traditional Lock (Overall Mean TPS)',
+        title='Adaptive Lock vs Best Baseline Lock (Overall Mean TPS)',
         output_filepath='../data/figures/tps_mean_adaptive_vs_best.png'
     )
 
@@ -112,7 +112,7 @@ def main():
     save_adaptive_vs_best_chart(
         df,
         target_column='Average Peak TPS',
-        title='Adaptive Lock vs Best Traditional Lock (Average Peak TPS)',
+        title='Adaptive Lock vs Best Baseline Lock (Average Peak TPS)',
         output_filepath='../data/figures/tps_peak_adaptive_vs_best.png'
     )
 

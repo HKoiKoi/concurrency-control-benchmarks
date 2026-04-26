@@ -102,7 +102,7 @@ def main():
     save_adaptive_vs_best_stability_chart(
         df,
         target_column='2-Sigma',
-        title='Adaptive Lock vs Most Stable Traditional Lock (2-Sigma Range)',
+        title='Adaptive Lock vs Most Stable Baseline Lock (2-Sigma Range)',
         output_filepath='../data/figures/stability_adaptive_vs_best.png'
     )
 

@@ -102,7 +102,7 @@ def main():
     save_adaptive_vs_best_latency_chart(
         df,
         target_column='Overall Mean Latency',
-        title='Adaptive Lock vs Best Traditional Lock (Overall Mean Latency)',
+        title='Adaptive Lock vs Best Baseline Lock (Overall Mean Latency)',
         output_filepath='../data/figures/latency_mean_adaptive_vs_best.png'
     )
 
@@ -110,7 +110,7 @@ def main():
     save_adaptive_vs_best_latency_chart(
         df,
         target_column='Overall p95 Latency',
-        title='Adaptive Lock vs Best Traditional Lock (Overall p95 Latency)',
+        title='Adaptive Lock vs Best Baseline Lock (Overall p95 Latency)',
         output_filepath='../data/figures/latency_p95_adaptive_vs_best.png'
     )
 
