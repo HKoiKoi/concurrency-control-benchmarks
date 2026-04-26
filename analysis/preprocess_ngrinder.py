@@ -30,6 +30,7 @@ def preprocess_ngrinder_data(base_data_dir, output_filepath):
     }
 
     df_list = []
+    failed_files = []
 
     for file_path in all_csv_files:
         try:
@@ -66,6 +67,10 @@ def preprocess_ngrinder_data(base_data_dir, output_filepath):
 
         except Exception as e:
             print(f"[오류] {file_path.name} 파일 처리 중 에러 발생: {e}")
+            failed_files.append(file_path.name)
+
+    if failed_files:
+        print(f"\n⚠️  총 {len(failed_files)}개 파일 처리 실패: {failed_files}")
 
     # 모든 데이터프레임 병합 및 저장
     if df_list:

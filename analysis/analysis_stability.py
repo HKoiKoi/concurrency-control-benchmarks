@@ -16,7 +16,10 @@ def analyze_stability(input_filepath, output_filepath):
     df = pd.read_csv(input_filepath)
 
     # 컬럼명 유연성 확보
-    lock_col = 'Lock' if 'Lock' in df.columns else 'Lock'
+    lock_col = 'Lock'
+    if lock_col not in df.columns:
+        print(f"[오류] '{lock_col}' 컬럼이 데이터에 없습니다. 현재 컬럼: {list(df.columns)}")
+        return
 
     # 핵심 분석 로직: Lock과 Vuser 단위로 묶어서 한 번에 모든 수식 처리
     def get_stability_metrics(group):
