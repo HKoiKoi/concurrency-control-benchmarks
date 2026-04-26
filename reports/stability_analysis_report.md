@@ -21,7 +21,7 @@
 |                      |  800  |        529.59        |     450.18      |      0.00       |     1429.94     |
 |                      | 1000  |        697.99        |     507.29      |      0.00       |     1712.57     |
 
-![Stability 그래프](../data/figures/stability_graph_36.png)
+![Stability 그래프](../data/figures/stability_comparison.png)
 
 ---
 

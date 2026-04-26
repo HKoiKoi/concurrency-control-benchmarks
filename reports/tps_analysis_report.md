@@ -21,7 +21,8 @@
 |                      |  800  |     50.00      |      72.81       |    100.00     |      190.43      |
 |                      | 1000  |     55.50      |      76.54       |    100.00     |      206.17      |
 
-![TPS 그래프](../data/figures/tps_graph_36.png)
+![Mean TPS 그래프](../data/figures/tps_mean_comparison.png)
+![Peak TPS 그래프](../data/figures/tps_peak_comparison.png)
 
 ---
 
