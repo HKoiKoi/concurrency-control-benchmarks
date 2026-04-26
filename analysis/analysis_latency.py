@@ -32,7 +32,7 @@ def analyze_latency(input_filepath, output_filepath):
     df = pd.read_csv(input_filepath)
 
     # 컬럼명 안전장치
-    lock_col = 'Lock' if 'Lock' in df.columns else 'Lock_Type'
+    lock_col = 'Lock' if 'Lock' in df.columns else 'Lock'
 
     # 1. 각 테스트(Order)별로 가중 평균 및 p95 산출
     def get_test_metrics(group):
