@@ -97,7 +97,7 @@ def plot_stability_mini_trends(input_filepath, output_filepath):
     # 저장
     plt.tight_layout()
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
-    plt.savefig(output_filepath, dpi=300, bbox_inches='tight')
+    plt.savefig(output_filepath, dpi=600, bbox_inches='tight')
     plt.close()
 
     print(f"✅ 미니 추세선 시각화 완료! '{output_filepath}'에 저장되었습니다.")
