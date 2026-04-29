@@ -18,9 +18,9 @@
 
 > **그림 1:** Redis 기반의 동시성 제어 아키텍처. `Spin Lock`(`Lettuce`)과 `Pub/Sub Lock`(`Redisson`) 전략이 구현됩니다.
 
-![Zookeeper 기반의 동시성 제어 아키텍처](/docs/images/readme/zookeeper-based-distributed-coordination-architecture.png)
+![ZooKeeper 기반의 동시성 제어 아키텍처](/docs/images/readme/zookeeper-based-distributed-coordination-architecture.png)
 
-> **그림 3:** Zookeeper 기반의 분산 코디네이터 아키텍처. `Zookeeper Lock`(`Curator`) 전략이 구현됩니다.
+> **그림 3:** ZooKeeper 기반의 분산 코디네이터 아키텍처. `ZooKeeper Lock`(`Curator`) 전략이 구현됩니다.
 
 - **Load Tester:** nGrinder
 - **Web Server:** Nginx (L4 Load Balancer)
@@ -28,7 +28,7 @@
 - **Database:** MySQL
 - **Distributed Lock Managers:**
   - **Redis:** Lettuce(Spin Lock), Redisson(Pub/Sub Lock)
-  - **Zookeeper:** Apache Curator
+  - **ZooKeeper:** Apache Curator
 
 ---
 
@@ -39,7 +39,6 @@
 - **Database:** MySQL 8.0
 - **NoSQL:** Redis
 - **Load Testing Tool:** nGrinder
-- **Observability:** Prometheus, Grafana, Zipkin
 
 ---
 
@@ -64,12 +63,10 @@
 | 방식                 | 구현 도구           | 비고             |
 | :------------------- | :------------------ | :--------------- |
 | **No Lock**          | MySQL (JPA)         | 기본             |
-| **Optimistic Lock**  | MySQL (JPA)         | 석사 논문        |
 | **Pessimistic Lock** | MySQL (JPA)         | 학술 / 석사 논문 |
-| **MySQL Named Lock** | MySQL (JPA)         | 석사 논문        |
 | **Spin Lock**        | Redis (Lettuce)     | 학술 / 석사 논문 |
 | **Pub/Sub Lock**     | Redis (Redisson)    | 학술 / 석사 논문 |
-| **Zookeeper Lock**   | Zookeeper (Curator) | 석사 논문        |
+| **ZooKeeper Lock**   | Zookeeper (Curator) | 석사 논문        |
 
 ---
 
@@ -80,8 +77,8 @@
 ### 1. 트래픽 모델링
 
 - **Target:** 수강신청 API (Enrollment API)
-- **Vuser 단계:** 500, 750, 1000명 (단계별 경합 강도 측정)
-- **Pattern:** nGrinder의 **Ramp-up** 기능을 활용하여 10초 내에 모든 Vuser가 투입되는 급격한 부하 곡선 형성
+- **Vuser 단계:** 500, 800, 1000명 (단계별 경합 강도 측정)
+- **Pattern:** nGrinder 단일 부하 테스트
 
 ### 2. 서비스 처리 모델
 
@@ -99,8 +96,3 @@
 | **Std Dev (응답 시간 표준편차; $\sigma$)** | $\sqrt{\frac{1}{n}\sum(X_i-\mu)^2}$             | 응답 시간의 변동성 및 **시스템의 안정성** 측정          |
 | **$2\sigma$ Interval ($2\sigma$ 구간)**    | $[\mu - 2\sigma, \mu + 2\sigma]$                | 전체 요청의 $95.4\%$가 포함되는 통계적 신뢰 범위        |
 | **$95th\%$ (p95 응답 시간)**               | 하위 $5\%$ 경계의 응답 시간                     | 상위 $95\%$ 유저가 겪는 최대 지연 시간 (Long-tail 분석) |
-| **Wait Time (대기 시간; $W$)**             | $T_{service\_start} - T_{arrival}$              | 락 경합으로 인해 큐에서 소요된 병목 시간                |
-| **Service Time (서비스 시간; $S$)**        | $T_{complete} - T_{service\_start}$             | 정규분포를 따르는 순수 로직 수행 시간                   |
-| **System CPU Usage (시스템 CPU 점유율)**   | System CPU 점유율                               | 시스템 연산 오버헤드                                    |
-| **System Mem Usage(시스템 메모리 점유량)** | JVM Heap Memory 점유량                          | 동시 요청 증가에 따른 메모리 고갈 위험도 분석           |
-| **Redis CPU Usage (Redis CPU 점유율)**     | Redis CPU 점유율                                | Redis 연산 오버헤드                                     |
