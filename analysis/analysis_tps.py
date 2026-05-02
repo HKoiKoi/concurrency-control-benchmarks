@@ -5,7 +5,7 @@ import pandas as pd
 
 def analyze_tps(input_filepath, output_filepath):
     """
-    통합된 nGrinder 결과를 바탕으로 TPS(Mean, Peak)를 분석하여 요약된 CSV를 생성합니다.
+    통합된 nGrinder 결과를 바탕으로 TPS(Mean, Peak, Std Dev)를 분석하여 요약된 CSV를 생성합니다.
     """
     if not os.path.exists(input_filepath):
         print(f"'{input_filepath}' 파일을 찾을 수 없습니다. 경로를 확인해주세요.")
@@ -19,16 +19,19 @@ def analyze_tps(input_filepath, output_filepath):
         print(f"[오류] '{lock_col}' 컬럼이 데이터에 없습니다. 현재 컬럼: {list(df.columns)}")
         return
 
+    # 1. 36회 개별 테스트 런의 평균, 최고 TPS 추출
     test_runs = df.groupby([lock_col, 'Vuser', 'Order']).agg(
         Mean_TPS=('TPS', 'mean'),
         Peak_TPS=('TPS', 'max')
     ).reset_index()
 
+    # 2. Vuser/Lock 별 최종 통계량 산출
     tps_summary = test_runs.groupby([lock_col, 'Vuser']).agg(
         Worst_Mean_TPS=('Mean_TPS', 'min'),
         Overall_Mean_TPS=('Mean_TPS', 'mean'),
         Best_Mean_TPS=('Mean_TPS', 'max'),
-        Average_Peak_TPS=('Peak_TPS', 'mean'),
+        Std_Dev_TPS=('Mean_TPS', 'std'),
+        Mean_Peak_TPS=('Peak_TPS', 'mean'),
     ).reset_index()
     tps_summary = tps_summary.round(2)
 
@@ -50,10 +53,11 @@ def analyze_tps(input_filepath, output_filepath):
         'Worst_Mean_TPS': 'Worst Mean TPS',
         'Overall_Mean_TPS': 'Overall Mean TPS',
         'Best_Mean_TPS': 'Best Mean TPS',
-        'Average_Peak_TPS': 'Average Peak TPS'
+        'Std_Dev_TPS': 'Std Dev TPS',
+        'Mean_Peak_TPS': 'Mean Peak TPS'
     })
 
-    target_columns = ['Worst Mean TPS', 'Overall Mean TPS', 'Best Mean TPS', 'Average Peak TPS']
+    target_columns = ['Worst Mean TPS', 'Overall Mean TPS', 'Best Mean TPS', 'Std Dev TPS', 'Mean Peak TPS']
     for col in target_columns:
         tps_summary[col] = tps_summary[col].apply(lambda x: f"{x:.2f}")
 
