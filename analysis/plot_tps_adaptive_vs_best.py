@@ -117,8 +117,8 @@ def main():
     # 2. Peak TPS 비교 그래프
     save_adaptive_vs_best_chart(
         df,
-        target_column='Average Peak TPS',
-        title='Adaptive Lock vs Best Baseline Lock (Average Peak TPS)',
+        target_column='Mean Peak TPS',
+        title='Adaptive Lock vs Best Baseline Lock (Mean Peak TPS)',
         output_filepath='../data/figures/tps_peak_adaptive_vs_best.png'
     )
 

@@ -29,35 +29,20 @@ public class AdaptiveLockManager {
 		LockType next = current;
 
 		switch (current) {
-			// [저부하 상태]
+			// [임계 부하 구간]
 			case PESSIMISTIC:
-				// 트래픽이 '올라갈 때(UP)'만 신경쓰면 됨
-				if (rho >= LockConstants.RHO_TH2_UP) {    // rho >= 0.34
+				// 트래픽 상승: 상향 임계점(0.24) 돌파 시 Pub/Sub(Redisson) 전환
+				if (rho >= LockConstants.RHO_TH1_UP) {    // rho >= 0.24
 					next = LockType.REDISSON;
-				} else if (rho >= LockConstants.RHO_TH1_UP) {    // rho >= 0.24
-					next = LockType.ZOOKEEPER;
 				}
 
 				break;
 
-			// [중부하 상태]
-			case ZOOKEEPER:
-				// 더 심해지는지(UP), 완화되는지(DOWN) 모두 신경써야 함
-				if (rho >= LockConstants.RHO_TH2_UP) {    // rho >= 0.34
-					next = LockType.REDISSON;
-				} else if (rho < LockConstants.RHO_TH1_DOWN) {    // rho < 0.22 (0.24보다 0.02 낮을 때 하강)
-					next = LockType.PESSIMISTIC;
-				}
-
-				break;
-
-			// [고부하 상태]
+			// [과부하 & 포화 부하 구간]
 			case REDISSON:
-				// 트래픽이 '내려갈 때(DOWN)'만 신경쓰면 됨
+				// 트래픽 하강: 하향 임계점(0.22) 미만 시 Pessimistic 복귀 (히스테리시스 적용)
 				if (rho < LockConstants.RHO_TH1_DOWN) {    // rho < 0.22
 					next = LockType.PESSIMISTIC;
-				} else if (rho < LockConstants.RHO_TH2_DOWN) {    // rho < 0.32 (0.34보다 0.02 낮을 때 하강)
-					next = LockType.ZOOKEEPER;
 				}
 
 				break;

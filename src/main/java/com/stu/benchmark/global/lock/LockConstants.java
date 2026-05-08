@@ -12,11 +12,9 @@ public final class LockConstants {
 	 */
 	public static final double SYSTEM_CAPACITY_MU = 223.89;
 
-	// Th1: Pessimistic <-> Zookeeper 전환 기준 (중심값: 0.24)
+	// 상향 임계점 (과부하 방어 임계점: 0.24)
 	public static final double RHO_TH1_UP = 0.24;
-	public static final double RHO_TH1_DOWN = 0.22;
 
-	// Th2: Zookeeper <-> Redisson 전환 기준 (중심값: 0.34)
-	public static final double RHO_TH2_UP = 0.34;
-	public static final double RHO_TH2_DOWN = 0.32;
+	// 하향 임계점 (안정화 복귀 임계점: 0.22)
+	public static final double RHO_TH1_DOWN = 0.22;
 }

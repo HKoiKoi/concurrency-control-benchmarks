@@ -96,7 +96,7 @@ def save_adaptive_vs_best_stability_chart(df, target_column, title, output_filep
 
 
 def main():
-    INPUT_FILEPATH = "../data/results/stability_ngrinder.csv"
+    INPUT_FILEPATH = "../data/results/latency_ngrinder.csv"
 
     if not os.path.exists(INPUT_FILEPATH):
         print("데이터 파일이 없습니다.")
