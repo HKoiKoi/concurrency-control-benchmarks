@@ -7,7 +7,8 @@ import pandas as pd
 
 def save_latency_bar_chart(df, target_column, title, output_filepath, err_column=None):
     """
-    지연 시간 지표(Mean, p95)를 기준으로 Vuser별 4개 락을 비교하는 막대 그래프를 생성합니다.
+    지연 시간 지표를 기준으로 Vuser별 4개 락을 비교하는 막대 그래프.
+    캔버스 너비와 막대 간격을 넓혀 텍스트 회전이나 지그재그 없이 겹침을 방지합니다.
     """
     target_locks = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock', 'ZooKeeper Lock']
 
@@ -21,7 +22,9 @@ def save_latency_bar_chart(df, target_column, title, output_filepath, err_column
 
     semantic_colors = ['#34495e', '#e74c3c', '#3498db', '#27ae60']
 
-    ax = pivot_df.plot(kind='bar', figsize=(14, 7), width=0.8, color=semantic_colors, zorder=2)
+    # figsize를 가로로 넓게 설정하여 막대 간 간격을 확보
+    fig, ax = plt.subplots(figsize=(16, 8))
+    pivot_df.plot(kind='bar', ax=ax, width=0.85, color=semantic_colors, zorder=2)
 
     if err_column:
         pivot_err = plot_df.pivot(index='Vuser', columns='Lock', values=err_column)[target_locks]
@@ -30,51 +33,70 @@ def save_latency_bar_chart(df, target_column, title, output_filepath, err_column
             container = ax.containers[i]
             means = pivot_df[lock_name].values
             errs = pivot_err[lock_name].values
-            x_pos = [rect.get_x() + rect.get_width() / 2.0 for rect in container]
-            ax.errorbar(x_pos, means, yerr=errs, fmt='none', ecolor='black', capsize=5, capthick=1.5, zorder=3)
 
-    plt.title(title, fontsize=16, fontweight='bold', pad=20)
+            # 오차 막대 하단 0 고정 보정
+            yerr_lower = np.minimum(means, errs)
+            yerr_upper = errs
+
+            x_pos = [rect.get_x() + rect.get_width() / 2.0 for rect in container]
+            ax.errorbar(x_pos, means, yerr=[yerr_lower, yerr_upper], fmt='none',
+                        ecolor='black', capsize=5, capthick=1.5, zorder=3)
+
+    plt.title(title, fontsize=16, fontweight='bold', pad=25)
     plt.xlabel('Number of Virtual Users (Vusers)', fontsize=12, labelpad=10)
     plt.ylabel(f'{target_column} (ms)', fontsize=12, labelpad=10)
     plt.xticks(rotation=0)
-    plt.legend(title='Lock Type', bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
+    plt.legend(title='Lock Type', bbox_to_anchor=(1.02, 1), loc='upper left')
+    plt.grid(axis='y', linestyle='--', alpha=0.6, zorder=0)
 
     for i, lock_name in enumerate(target_locks):
         container = ax.containers[i]
+        errs = pivot_err[lock_name].values if err_column else [0] * len(container)
+
         for j, p in enumerate(container):
             height = p.get_height()
+            err_val = errs[j]
+
             if height > 0:
-                ax.annotate(f'{height:.2f}',
-                            (p.get_x() + p.get_width() / 2., height),
-                            ha='center', va='bottom',
-                            xytext=(0, 4), textcoords='offset points',
-                            fontsize=9, fontweight='bold', zorder=4,
-                            bbox=dict(facecolor='white', edgecolor='none', alpha=0.8, pad=1.5))
+                # .2f 형식 유지
+                if err_val > 0:
+                    label_text = f"{height:.2f}\n(±{err_val:.2f})"
+                    y_pos = height + err_val
+                else:
+                    label_text = f"{height:.2f}"
+                    y_pos = height
+
+                # 바 차트는 bbox 없이 텍스트 높이 조절로 가독성 확보
+                ax.annotate(label_text,
+                            (p.get_x() + p.get_width() / 2., y_pos),
+                            ha='center', va='bottom', multialignment='center',
+                            xytext=(0, 6), textcoords='offset points',
+                            fontsize=8.5, fontweight='bold', color='black', zorder=4)
 
     if err_column:
         max_y_value = (plot_df[target_column] + plot_df[err_column]).max()
+        plt.ylim(0, max_y_value * 1.3)
     else:
         max_y_value = pivot_df.max().max()
+        plt.ylim(0, max_y_value * 1.2)
 
-    plt.ylim(0, max_y_value * 1.15)
     plt.tight_layout()
 
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
     plt.savefig(output_filepath, dpi=600, bbox_inches='tight')
     plt.close()
-    print(f"그래프 저장 완료: {output_filepath}")
+    print(f"✅ 바 차트 저장 완료: {output_filepath}")
 
 
 def plot_stability_mini_trends(df, output_filepath):
     """
     X축에 락 종류를 배치하고, Vuser 증가에 따른 지연 시간 변화를 선으로 이은 미니 추세선 그래프 (2-Sigma 적용)
+    🚨 가독성 개선: Vusers 1,000 데이터의 텍스트를 위로 띄워 겹침 방지
     """
     target_locks = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock', 'ZooKeeper Lock']
     vusers = [500, 800, 1000]
     semantic_colors = ['#34495e', '#e74c3c', '#3498db', '#27ae60']
 
-    # 필요한 컬럼 숫자로 변환
     df['Overall Mean Latency'] = pd.to_numeric(df['Overall Mean Latency'])
     df['2-Sigma'] = pd.to_numeric(df['2-Sigma'])
 
@@ -89,12 +111,10 @@ def plot_stability_mini_trends(df, output_filepath):
         means = subset['Overall Mean Latency'].values
         two_sigmas = subset['2-Sigma'].values
 
-        # CSV에 하/상한값이 없으므로 즉석에서 오차 막대 길이 계산 (음수 돌파 방지)
         yerr_lower = np.minimum(means, two_sigmas)
         yerr_upper = two_sigmas
         yerr = [yerr_lower, yerr_upper]
 
-        # 최대 상한값 갱신 (Y축 스케일링용)
         max_upper_bound = max(max_upper_bound, np.nanmax(means + two_sigmas))
 
         x_base = i
@@ -102,30 +122,41 @@ def plot_stability_mini_trends(df, output_filepath):
 
         ax.errorbar(x_pos, means, yerr=yerr, fmt='-o', color=semantic_colors[i],
                     linewidth=3.0, markersize=8, capsize=6, capthick=2, elinewidth=2,
-                    label=lock, alpha=0.85)
+                    label=lock, alpha=0.85, zorder=2)
 
         for j, mean_val in enumerate(means):
             if not np.isnan(mean_val):
+                two_sigma_val = two_sigmas[j]
+
+                label_text = f'{mean_val:.2f}\n(±{two_sigma_val:.2f})\n(v{vusers[j]})'
                 bbox_props = dict(boxstyle="round,pad=0.2", facecolor='white', edgecolor='none', alpha=0.8)
-                ax.annotate(f'{mean_val:.0f}\n(v{vusers[j]})',
-                            (x_pos[j], mean_val), xytext=(0, 15), textcoords='offset points',
-                            va='bottom', ha='center', fontsize=9, color=semantic_colors[i],
-                            fontweight='bold', bbox=bbox_props)
+
+                # 🚨 Vusers 1000 (j == 2) 데이터일 때만 y_offset을 40으로 크게 주어 겹침 방지
+                y_offset = 40 if j == 2 else 12
+
+                ax.annotate(label_text,
+                            (x_pos[j], mean_val),
+                            xytext=(0, y_offset), textcoords='offset points',
+                            ha='center', va='bottom', multialignment='center',
+                            fontsize=9, color=semantic_colors[i],
+                            fontweight='bold', zorder=4, bbox=bbox_props)
 
     plt.title('Comparison of Latency Consistency with 2-Sigma Bounds', fontsize=16, fontweight='bold', pad=20)
     plt.xlabel('Lock Type', fontsize=12, labelpad=10)
     plt.ylabel('Latency (ms)', fontsize=12, labelpad=10)
     plt.xticks(np.arange(len(target_locks)), target_locks, fontsize=12, fontweight='bold')
     plt.xlim(-0.5, len(target_locks) - 0.5)
-    plt.ylim(bottom=0, top=max_upper_bound * 1.15)
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.legend(title='Lock Type', loc='upper left')
+
+    # 텍스트가 더 위로 솟아오른 것을 감안하여 Y축 천장을 1.35배로 넉넉하게 확장
+    plt.ylim(bottom=0, top=max_upper_bound * 1.35)
+    plt.grid(axis='y', linestyle='--', alpha=0.6, zorder=0)
+    plt.legend(title='Lock Type', loc='upper left', bbox_to_anchor=(1.02, 1))
 
     plt.tight_layout()
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
     plt.savefig(output_filepath, dpi=600, bbox_inches='tight')
     plt.close()
-    print(f"그래프 저장 완료: {output_filepath}")
+    print(f"✅ 안정성 비교(추세선) 그래프 저장 완료: {output_filepath}")
 
 
 def run_latency_visual_analysis(input_path):
@@ -136,7 +167,7 @@ def run_latency_visual_analysis(input_path):
     print(f"데이터를 불러옵니다: {input_path}")
     df = pd.read_csv(input_path)
 
-    # 1. Overall Mean Latency 비교 그래프 (표준편차 오차 막대 포함)
+    # 1. Overall Mean Latency 비교 그래프
     save_latency_bar_chart(
         df,
         target_column='Overall Mean Latency',
@@ -145,7 +176,7 @@ def run_latency_visual_analysis(input_path):
         err_column='Overall Std Dev'
     )
 
-    # 2. Overall p95 Latency 비교 그래프 (오차 막대 없음)
+    # 2. Overall p95 Latency 비교 그래프
     save_latency_bar_chart(
         df,
         target_column='Overall p95 Latency',
@@ -153,7 +184,7 @@ def run_latency_visual_analysis(input_path):
         output_filepath='../data/figures/latency_p95_comparison.png'
     )
 
-    # 3. Stability 추세선 그래프 (2-Sigma 적용)
+    # 3. Stability 추세선 그래프
     plot_stability_mini_trends(
         df,
         output_filepath='../data/figures/stability_comparison.png'

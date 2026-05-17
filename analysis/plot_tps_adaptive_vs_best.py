@@ -5,9 +5,10 @@ import numpy as np
 import pandas as pd
 
 
-def save_adaptive_vs_best_chart(df, target_column, title, output_filepath):
+def save_adaptive_vs_best_chart(df, target_column, title, output_filepath, error_column=None):
     """
     4개의 락 중 가장 성능이 높은(Best) 수치를 추출하여 Adaptive Lock과 1:1 비교하는 막대 그래프
+    (ADLF 라벨 추가 및 깔끔한 상단 여백 스타일 적용)
     """
     competitor_locks = ['Pessimistic Lock', 'Spin Lock', 'Pub/Sub Lock', 'ZooKeeper Lock']
 
@@ -17,77 +18,104 @@ def save_adaptive_vs_best_chart(df, target_column, title, output_filepath):
     vusers = sorted(df['Vuser'].unique())
 
     best_vals = []
+    best_errs = []
     best_names = []
+
     adapt_vals = []
+    adapt_errs = []
+    adapt_names = []
 
     # 각 Vuser별로 Best 락과 Adaptive 락의 데이터 추출
     for v in vusers:
         # 1. 4개 락 중 1위(최고 수치) 찾기
         v_comp = df[(df['Vuser'] == v) & (df['Lock'].isin(competitor_locks))]
-        best_idx = v_comp[target_column].idxmax()  # 가장 높은 값의 인덱스
+        best_idx = v_comp[target_column].idxmax()
 
         best_vals.append(v_comp.loc[best_idx, target_column])
-        # 락 이름에서 ' Lock' 글자를 빼고 짧게 저장 (예: Pub/Sub Lock -> Pub/Sub)
         best_names.append(v_comp.loc[best_idx, 'Lock'].replace(' Lock', ''))
+
+        if error_column and error_column in df.columns:
+            best_errs.append(pd.to_numeric(v_comp.loc[best_idx, error_column]))
+        else:
+            best_errs.append(0)
 
         # 2. Adaptive Lock 데이터 가져오기
         v_adapt = df[(df['Vuser'] == v) & (df['Lock'] == 'Adaptive Lock')]
+        adapt_names.append('ADLF')
+
         if v_adapt.empty:
-            print(f"[경고] Vuser {v}에 대한 Adaptive Lock 데이터가 없습니다. 0으로 대체합니다.")
             adapt_vals.append(0)
+            adapt_errs.append(0)
         else:
             adapt_vals.append(v_adapt[target_column].values[0])
+            if error_column and error_column in df.columns:
+                adapt_errs.append(pd.to_numeric(v_adapt[error_column].values[0]))
+            else:
+                adapt_errs.append(0)
 
     # 그래프 그리기 준비
     fig, ax = plt.subplots(figsize=(10, 7))
     x_base = np.arange(len(vusers))
     width = 0.35
 
-    # 막대 색상: Best 경쟁자(진한 회색), Adaptive(보라색/강조색)
     color_best = '#7f8c8d'
     color_adapt = '#9b59b6'
 
+    has_errors = any(e > 0 for e in best_errs + adapt_errs)
+
     # 막대 생성
-    rects1 = ax.bar(x_base - width / 2, best_vals, width, color=color_best, label='Best of Others')
-    rects2 = ax.bar(x_base + width / 2, adapt_vals, width, color=color_adapt, label='Adaptive Lock')
+    if has_errors:
+        rects1 = ax.bar(x_base - width / 2, best_vals, width, color=color_best, label='Best of Others',
+                        yerr=best_errs, capsize=5, ecolor='black', zorder=2)
+        rects2 = ax.bar(x_base + width / 2, adapt_vals, width, color=color_adapt, label='ADLF',
+                        yerr=adapt_errs, capsize=5, ecolor='black', zorder=2)
+    else:
+        rects1 = ax.bar(x_base - width / 2, best_vals, width, color=color_best, label='Best of Others', zorder=2)
+        rects2 = ax.bar(x_base + width / 2, adapt_vals, width, color=color_adapt, label='ADLF', zorder=2)
 
     # 스타일링
     ax.set_title(title, fontsize=16, fontweight='bold', pad=25)
-    ax.set_xlabel('Vuser (Virtual Users)', fontsize=12, labelpad=10)
+    ax.set_xlabel('Number of Virtual Users (Vusers)', fontsize=12, labelpad=10)
     ax.set_ylabel(f'{target_column} (req/s)', fontsize=12, labelpad=10)
     ax.set_xticks(x_base)
-    ax.set_xticklabels([f'Vuser {v}' for v in vusers], fontsize=11, fontweight='bold')
+    ax.set_xticklabels([f'{v}' for v in vusers], fontsize=11)
 
-    # 범례 및 격자
     ax.legend(loc='upper left', bbox_to_anchor=(1.02, 1), title='Comparison Group')
-    ax.grid(axis='y', linestyle='--', alpha=0.6)
+    ax.grid(axis='y', linestyle='--', alpha=0.6, zorder=0)
 
-    # 수치 및 이름 표시 함수 (막대 상단)
-    def autolabel(rects, vals, names=None):
+    # 수치 및 이름 표시 함수 (bbox 제거 및 여백 확대)
+    def autolabel(rects, vals, names=None, errs=None):
         for i, rect in enumerate(rects):
             height = rect.get_height()
+            err_val = errs[i] if errs else 0
 
-            # Best의 경우 어떤 락이 1위를 했는지 이름도 같이 표시
-            if names:
-                label_text = f"[{names[i]}]\n{vals[i]:.2f}"
-            else:
-                label_text = f"{vals[i]:.2f}"
+            if height > 0:
+                lines = []
+                if names:
+                    lines.append(f"[{names[i]}]")
 
-            ax.annotate(label_text,
-                        xy=(rect.get_x() + rect.get_width() / 2, height),
-                        xytext=(0, 5),  # 5포인트 위로
-                        textcoords="offset points",
-                        ha='center', va='bottom',
-                        fontsize=10, fontweight='bold',
-                        color='black')
+                if err_val > 0:
+                    lines.append(f"{vals[i]:.2f}\n(±{err_val:.2f})")
+                else:
+                    lines.append(f"{vals[i]:.2f}")
 
-    autolabel(rects1, best_vals, best_names)  # Best 막대 위에는 락 이름 명시
-    autolabel(rects2, adapt_vals)  # Adaptive 막대 위에는 수치만
+                label_text = "\n".join(lines)
+                y_pos = height + err_val
 
-    # Y축 상단 여유 20% 확보 (텍스트 겹침 방지)
-    all_vals = [v for v in best_vals + adapt_vals if v > 0]
-    y_max = max(all_vals) if all_vals else 1
-    plt.ylim(0, y_max * 1.25)
+                ax.annotate(label_text,
+                            xy=(rect.get_x() + rect.get_width() / 2, y_pos),
+                            xytext=(0, 12), textcoords="offset points",
+                            ha='center', va='bottom', multialignment='center',
+                            fontsize=10, fontweight='bold', zorder=4)
+
+    autolabel(rects1, best_vals, names=best_names, errs=best_errs if has_errors else None)
+    autolabel(rects2, adapt_vals, names=adapt_names, errs=adapt_errs if has_errors else None)
+
+    # Y축 상단 여유 확보
+    y_max_factor = 1.35 if has_errors else 1.25
+    all_max_heights = [v + (e if has_errors else 0) for v, e in zip(best_vals + adapt_vals, best_errs + adapt_errs)]
+    y_max = max(all_max_heights) if all_max_heights else 1
+    plt.ylim(0, y_max * y_max_factor)
     plt.tight_layout()
 
     # 저장
@@ -101,7 +129,7 @@ def main():
     INPUT_FILEPATH = "../data/results/tps_ngrinder.csv"
 
     if not os.path.exists(INPUT_FILEPATH):
-        print("데이터 파일이 없습니다.")
+        print(f"데이터 파일이 없습니다: {INPUT_FILEPATH}")
         return
 
     df = pd.read_csv(INPUT_FILEPATH)
@@ -110,15 +138,16 @@ def main():
     save_adaptive_vs_best_chart(
         df,
         target_column='Overall Mean TPS',
-        title='Adaptive Lock vs Best Baseline Lock (Overall Mean TPS)',
-        output_filepath='../data/figures/tps_mean_adaptive_vs_best.png'
+        title='Comparison of Overall Mean TPS: ADLF vs Best Lock (req/s)',
+        output_filepath='../data/figures/tps_mean_adaptive_vs_best.png',
+        error_column='Std Dev TPS'
     )
 
     # 2. Peak TPS 비교 그래프
     save_adaptive_vs_best_chart(
         df,
         target_column='Mean Peak TPS',
-        title='Adaptive Lock vs Best Baseline Lock (Mean Peak TPS)',
+        title='Comparison of Mean Peak TPS: ADLF vs Best Lock (req/s)',
         output_filepath='../data/figures/tps_peak_adaptive_vs_best.png'
     )
 
