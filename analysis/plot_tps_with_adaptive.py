@@ -61,7 +61,7 @@ def save_tps_3way_comparison_chart(df, target_column, title, output_filepath):
     ax.set_xticks(x_base)
     ax.set_xticklabels([f'{v}' for v in vusers], fontsize=11)
 
-    ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), title='Comparison Group')
+    ax.legend(loc='best', title='Comparison Group')
     ax.grid(axis='y', linestyle='--', alpha=0.6, zorder=0)
 
     # 4. 라벨링

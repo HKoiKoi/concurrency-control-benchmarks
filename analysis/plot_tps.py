@@ -29,7 +29,7 @@ def save_tps_bar_chart(df, target_column, title, output_filepath):
     plt.xlabel('Number of Virtual Users (Vusers)', fontsize=12, labelpad=10)
     plt.ylabel(f'{target_column} (req/s)', fontsize=12, labelpad=10)
     plt.xticks(rotation=0)
-    plt.legend(title='Lock Type', bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.legend(title='Lock Type', loc='best')
     plt.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
 
     # 5. 막대 위 수치 표시 (표준편차 병기 및 오차선 위로 위치 이동)

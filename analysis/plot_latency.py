@@ -27,7 +27,7 @@ def save_latency_bar_chart(df, target_column, title, output_filepath):
     plt.xlabel('Number of Virtual Users (Vusers)', fontsize=12, labelpad=10)
     plt.ylabel(f'{target_column} (ms)', fontsize=12, labelpad=10)
     plt.xticks(rotation=0)
-    plt.legend(title='Lock Type', bbox_to_anchor=(1.02, 1), loc='upper left')
+    plt.legend(title='Lock Type', loc='best')
     plt.grid(axis='y', linestyle='--', alpha=0.6, zorder=0)
 
     for i, lock_name in enumerate(target_locks):
@@ -119,7 +119,7 @@ def plot_stability_mini_trends(df, output_filepath):
     # 텍스트가 더 위로 솟아오른 것을 감안하여 Y축 천장을 1.35배로 넉넉하게 확장
     plt.ylim(bottom=0, top=max_upper_bound * 1.35)
     plt.grid(axis='y', linestyle='--', alpha=0.6, zorder=0)
-    plt.legend(title='Lock Type', loc='upper left', bbox_to_anchor=(1.02, 1))
+    plt.legend(title='Lock Type', loc='best')
 
     plt.tight_layout()
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
